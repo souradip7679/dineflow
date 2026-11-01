@@ -120,12 +120,6 @@ dineflow/
     └── VIVA_QUESTIONS.md            # Viva Voce Questions & Answers
 ```
 
----
-
-## 📚 Academic Documentation & Deliverables
-
-- **[PROJECT_REPORT.md](file:///d:/Angular%20Project%202/dineflow/docs/PROJECT_REPORT.md)**: Full academic report covering system requirements, architecture diagrams, data binding, array operations, test cases, and future scope.
-- **[VIVA_QUESTIONS.md](file:///d:/Angular%20Project%202/dineflow/docs/VIVA_QUESTIONS.md)**: 14 essential viva questions with comprehensive answers explaining AngularJS features and design decisions.
 
 ---
 

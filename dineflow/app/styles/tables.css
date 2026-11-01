@@ -1,0 +1,512 @@
+/**
+ * DineFlow - Interactive Table Layout & Floor Plan Stylesheet
+ * Spatial representation of dining tables, realistic chairs, shapes,
+ * zones, and real-time status management.
+ */
+
+/* -------------------------------------------------------------------------- */
+/* 1. Floor Status Legend Card                                                */
+/* -------------------------------------------------------------------------- */
+.df-legend-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.df-legend-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  font-size: 0.9375rem;
+  color: var(--df-text-secondary);
+}
+
+.df-legend-items {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.df-legend-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: var(--df-radius-full);
+  border: 1px solid var(--df-border-subtle);
+  background: var(--df-bg-surface);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--df-transition-fast);
+}
+
+.df-legend-pill:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--df-shadow-sm);
+}
+
+.df-legend-pill--available { border-color: var(--df-status-available-border); }
+.df-legend-pill--reserved { border-color: var(--df-status-reserved-border); }
+.df-legend-pill--occupied { border-color: var(--df-status-occupied-border); }
+.df-legend-pill--cleaning { border-color: var(--df-status-cleaning-border); }
+
+.df-legend-pill.active {
+  box-shadow: 0 0 0 2px var(--df-text-primary);
+}
+
+.df-legend-count {
+  font-size: 0.75rem;
+  padding: 0.1rem 0.45rem;
+  border-radius: var(--df-radius-full);
+  background: var(--df-bg-subtle);
+}
+
+/* -------------------------------------------------------------------------- */
+/* 2. Zone Tabs & Capacity Filter Card                                        */
+/* -------------------------------------------------------------------------- */
+.df-table-filters-card {
+  padding: 1rem 1.5rem;
+}
+
+.df-filters-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+}
+
+.df-zone-tabs {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  overflow-x: auto;
+}
+
+.df-zone-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.5rem 0.95rem;
+  border-radius: var(--df-radius-md);
+  border: 1px solid var(--df-border-subtle);
+  background: var(--df-bg-surface);
+  color: var(--df-text-secondary);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--df-transition-fast);
+}
+
+.df-zone-tab-btn:hover {
+  background: var(--df-bg-subtle);
+  color: var(--df-text-primary);
+}
+
+.df-zone-tab-btn.active {
+  background: var(--df-forest);
+  border-color: var(--df-forest);
+  color: #FFFFFF;
+}
+
+.df-zone-count {
+  font-size: 0.75rem;
+  opacity: 0.75;
+}
+
+.df-capacity-filter {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.df-filter-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--df-text-secondary);
+  white-space: nowrap;
+}
+
+/* -------------------------------------------------------------------------- */
+/* 3. Floor Plan Container & Table Card Directive                             */
+/* -------------------------------------------------------------------------- */
+.df-floor-plan-container {
+  margin-bottom: 3.5rem;
+}
+
+.df-floor-plan-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.df-floor-count {
+  font-size: 0.875rem;
+  color: var(--df-text-secondary);
+}
+
+.df-tables-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.75rem;
+}
+
+/* Table Card Component */
+.df-table-card {
+  background: var(--df-bg-surface);
+  border: 2px solid var(--df-border-subtle);
+  border-radius: var(--df-radius-lg);
+  padding: 1.5rem;
+  box-shadow: var(--df-shadow-card);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  transition: transform var(--df-transition-normal), box-shadow var(--df-transition-normal), border-color var(--df-transition-normal);
+  position: relative;
+  overflow: hidden;
+}
+
+.df-table-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--df-shadow-md);
+}
+
+/* Dynamic status borders & accent corners */
+.df-table-card--available {
+  border-color: var(--df-status-available);
+}
+.df-table-card--available:hover {
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.2);
+}
+
+.df-table-card--reserved {
+  border-color: var(--df-status-reserved);
+}
+.df-table-card--reserved:hover {
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.2);
+}
+
+.df-table-card--occupied {
+  border-color: var(--df-status-occupied);
+}
+.df-table-card--occupied:hover {
+  box-shadow: 0 8px 24px rgba(245, 158, 11, 0.2);
+}
+
+.df-table-card--cleaning {
+  border-color: var(--df-status-cleaning);
+}
+.df-table-card--cleaning:hover {
+  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.2);
+}
+
+.df-table-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.df-table-card__number-wrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.df-table-card__number {
+  font-family: var(--df-font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--df-text-primary);
+}
+
+.df-table-card__zone {
+  font-size: 0.75rem;
+  color: var(--df-text-muted);
+}
+
+/* Visual Floor Table & Chair Representation */
+.df-table-card__visual {
+  position: relative;
+  height: 120px;
+  background: var(--df-bg-subtle);
+  border-radius: var(--df-radius-md);
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.df-visual-table {
+  background: var(--df-bg-surface);
+  border: 2px solid var(--df-border-subtle);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  font-weight: 700;
+  color: var(--df-text-secondary);
+}
+
+.df-visual-round {
+  width: 66px;
+  height: 66px;
+  border-radius: var(--df-radius-full);
+}
+
+.df-visual-square {
+  width: 66px;
+  height: 66px;
+  border-radius: var(--df-radius-md);
+}
+
+.df-visual-rectangle {
+  width: 96px;
+  height: 58px;
+  border-radius: var(--df-radius-md);
+}
+
+.df-visual-cap {
+  font-size: 0.8125rem;
+}
+
+/* Visual Chairs around table */
+.df-visual-chairs {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.df-chair {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: var(--df-radius-sm);
+  background: var(--df-text-muted);
+  opacity: 0.55;
+}
+
+/* Chairs layout positions for 2, 4, 6, 8, 10 */
+.df-visual-chairs--2 .df-chair:nth-child(1) { left: 24%; }
+.df-visual-chairs--2 .df-chair:nth-child(2) { right: 24%; }
+
+.df-visual-chairs--4 .df-chair:nth-child(1) { top: 10px; }
+.df-visual-chairs--4 .df-chair:nth-child(2) { bottom: 10px; }
+.df-visual-chairs--4 .df-chair:nth-child(3) { left: 25px; }
+.df-visual-chairs--4 .df-chair:nth-child(4) { right: 25px; }
+
+.df-visual-chairs--6 .df-chair:nth-child(1) { top: 10px; left: 35%; }
+.df-visual-chairs--6 .df-chair:nth-child(2) { top: 10px; right: 35%; }
+.df-visual-chairs--6 .df-chair:nth-child(3) { bottom: 10px; left: 35%; }
+.df-visual-chairs--6 .df-chair:nth-child(4) { bottom: 10px; right: 35%; }
+.df-visual-chairs--6 .df-chair:nth-child(5) { left: 20px; }
+.df-visual-chairs--6 .df-chair:nth-child(6) { right: 20px; }
+
+.df-visual-chairs--8 .df-chair:nth-child(1) { top: 10px; left: 30%; }
+.df-visual-chairs--8 .df-chair:nth-child(2) { top: 10px; left: 50%; transform: translateX(-50%); }
+.df-visual-chairs--8 .df-chair:nth-child(3) { top: 10px; right: 30%; }
+.df-visual-chairs--8 .df-chair:nth-child(4) { bottom: 10px; left: 30%; }
+.df-visual-chairs--8 .df-chair:nth-child(5) { bottom: 10px; left: 50%; transform: translateX(-50%); }
+.df-visual-chairs--8 .df-chair:nth-child(6) { bottom: 10px; right: 30%; }
+.df-visual-chairs--8 .df-chair:nth-child(7) { left: 18px; }
+.df-visual-chairs--8 .df-chair:nth-child(8) { right: 18px; }
+
+.df-table-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  font-size: 0.8125rem;
+  color: var(--df-text-secondary);
+}
+
+.df-table-card__capacity {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.df-table-card__action-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-weight: 600;
+  color: var(--df-terracotta);
+}
+
+/* -------------------------------------------------------------------------- */
+/* 4. Table Details Modal & Status Switcher                                    */
+/* -------------------------------------------------------------------------- */
+.df-table-modal-top {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--df-border-subtle);
+}
+
+.df-table-modal-visual {
+  width: 90px;
+  height: 90px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--df-bg-subtle);
+  border: 2px solid var(--df-border-subtle);
+  border-radius: var(--df-radius-md);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.df-table-modal-meta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.df-modal-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.875rem;
+}
+
+.df-meta-label {
+  color: var(--df-text-secondary);
+}
+
+.df-table-modal-desc {
+  font-size: 0.875rem;
+  color: var(--df-text-secondary);
+  line-height: 1.5;
+}
+
+.df-divider {
+  border: none;
+  height: 1px;
+  background-color: var(--df-border-subtle);
+  margin: 1.25rem 0;
+}
+
+.df-section-subtitle-sm {
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--df-text-secondary);
+  margin-bottom: 0.75rem;
+}
+
+/* Staff Status Switcher Buttons */
+.df-status-switcher-buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.65rem;
+}
+
+.df-btn-status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.75rem 0.5rem;
+  border-radius: var(--df-radius-md);
+  border: 1px solid var(--df-border-subtle);
+  background: var(--df-bg-surface);
+  color: var(--df-text-secondary);
+  font-size: 0.78125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--df-transition-fast);
+}
+
+.df-btn-status i {
+  font-size: 1.15rem;
+}
+
+.df-btn-status:hover {
+  transform: translateY(-2px);
+  background: var(--df-bg-subtle);
+}
+
+.df-btn-status--available.active {
+  background: var(--df-status-available-bg);
+  border-color: var(--df-status-available);
+  color: var(--df-status-available);
+  font-weight: 700;
+}
+
+.df-btn-status--reserved.active {
+  background: var(--df-status-reserved-bg);
+  border-color: var(--df-status-reserved);
+  color: var(--df-status-reserved);
+  font-weight: 700;
+}
+
+.df-btn-status--occupied.active {
+  background: var(--df-status-occupied-bg);
+  border-color: var(--df-status-occupied);
+  color: #D97706;
+  font-weight: 700;
+}
+
+.df-btn-status--cleaning.active {
+  background: var(--df-status-cleaning-bg);
+  border-color: var(--df-status-cleaning);
+  color: var(--df-status-cleaning);
+  font-weight: 700;
+}
+
+/* Linked Reservations inside Table Modal */
+.df-table-res-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.df-table-res-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  background: var(--df-bg-subtle);
+  border-radius: var(--df-radius-md);
+  font-size: 0.875rem;
+}
+
+.df-res-time-wrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.df-res-date { font-weight: 600; }
+.df-res-hour { font-size: 0.75rem; color: var(--df-text-muted); }
+
+.df-res-diner-wrap {
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 600px) {
+  .df-status-switcher-buttons {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

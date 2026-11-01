@@ -1,0 +1,203 @@
+<!-- DineFlow - Home View -->
+<div class="df-home-view">
+
+  <!-- Hero Section -->
+  <section class="df-hero-section">
+    <div class="df-hero-backdrop" aria-hidden="true"></div>
+    <div class="df-hero-container">
+      <div class="df-hero-content">
+        <span class="df-hero-eyebrow">
+          <i class="fa-solid fa-sparkles"></i> Welcome to DineFlow Bistro &amp; Lounge
+        </span>
+        <h1 class="df-hero-title">{{vm.headline}}</h1>
+        <p class="df-hero-tagline">{{vm.tagline}}</p>
+        
+        <div class="df-hero-actions">
+          <a href="#/book" class="df-btn df-btn-lg df-btn-terracotta">
+            <i class="fa-solid fa-champagne-glasses"></i>
+            <span>Reserve a Table</span>
+          </a>
+          <a href="#/tables" class="df-btn df-btn-lg df-btn-outline-light">
+            <i class="fa-solid fa-table-cells"></i>
+            <span>View Floor Plan</span>
+          </a>
+        </div>
+
+        <!-- Quick Highlight Badges -->
+        <div class="df-hero-stats">
+          <div class="df-hero-stat" ng-repeat="item in vm.highlights">
+            <div class="df-hero-stat__icon"><i class="fa-solid {{item.icon}}"></i></div>
+            <div class="df-hero-stat__num">{{item.number}}</div>
+            <div class="df-hero-stat__lbl">{{item.label}}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Reservation Bar -->
+      <div class="df-hero-widget-wrap">
+        <div class="df-quick-book-card">
+          <div class="df-quick-book-card__header">
+            <h3><i class="fa-solid fa-clock"></i> Quick Reservation</h3>
+            <span class="df-quick-book-card__badge">Instant Confirmation</span>
+          </div>
+          <form class="df-quick-book-form" ng-submit="vm.jumpToBooking()">
+            <div class="df-form-group">
+              <label><i class="fa-solid fa-calendar-day"></i> Date</label>
+              <input type="date" class="df-input" ng-model="vm.quickDate" required>
+            </div>
+            <div class="df-form-group">
+              <label><i class="fa-solid fa-clock"></i> Time</label>
+              <select class="df-select" ng-model="vm.quickTime">
+                <option value="12:00">12:00 PM (Lunch)</option>
+                <option value="13:30">1:30 PM (Lunch)</option>
+                <option value="18:30">6:30 PM (Dinner)</option>
+                <option value="19:30">7:30 PM (Dinner)</option>
+                <option value="20:30">8:30 PM (Dinner)</option>
+                <option value="21:30">9:30 PM (Late Dinner)</option>
+              </select>
+            </div>
+            <div class="df-form-group">
+              <label><i class="fa-solid fa-users"></i> Guests</label>
+              <select class="df-select" ng-model="vm.quickGuests">
+                <option ng-value="1">1 Person</option>
+                <option ng-value="2">2 Guests (Couple)</option>
+                <option ng-value="4">4 Guests (Standard)</option>
+                <option ng-value="6">6 Guests (Party)</option>
+                <option ng-value="8">8+ Guests (VIP)</option>
+              </select>
+            </div>
+            <button type="submit" class="df-btn df-btn-terracotta df-btn-block">
+              <span>Find Table</span>
+              <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Culinary Specialties Section -->
+  <section class="df-section df-section--dishes">
+    <div class="df-container">
+      <div class="df-section-header text-center">
+        <span class="df-section-eyebrow">Gastronomy &amp; Artistry</span>
+        <h2 class="df-section-title">Featured Culinary Creations</h2>
+        <p class="df-section-subtitle">
+          Crafted with locally foraged ingredients, prime dry-aged cuts, and sustainable seafood.
+        </p>
+      </div>
+
+      <div class="df-dishes-grid">
+        <article class="df-dish-card" ng-repeat="dish in vm.dishes">
+          <div class="df-dish-card__media">
+            <div class="df-dish-card__placeholder" aria-hidden="true">
+              <i class="fa-solid fa-utensils"></i>
+            </div>
+            <span class="df-dish-badge" ng-if="dish.badge">{{dish.badge}}</span>
+            <span class="df-dish-price">{{dish.price}}</span>
+          </div>
+          <div class="df-dish-card__body">
+            <div class="df-dish-card__category">{{dish.category}} &bull; {{dish.calories}}</div>
+            <h3 class="df-dish-card__title">{{dish.name}}</h3>
+            <p class="df-dish-card__desc">{{dish.description}}</p>
+            <div class="df-dish-card__tags">
+              <span class="df-tag" ng-repeat="tag in dish.tags">{{tag}}</span>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="text-center mt-4">
+        <a href="#/book" class="df-btn df-btn-forest">
+          <i class="fa-solid fa-utensils"></i>
+          <span>Experience The Tasting Menu &bull; Reserve Table</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Unique Dining Ambiances / Zones -->
+  <section class="df-section df-section--zones">
+    <div class="df-container">
+      <div class="df-section-header text-center">
+        <span class="df-section-eyebrow">Dining Spaces</span>
+        <h2 class="df-section-title">Four Distinct Dining Atmospheres</h2>
+        <p class="df-section-subtitle">
+          Whether celebrating an intimate milestone or hosting a vibrant business reception, our floor plan is designed for every occasion.
+        </p>
+      </div>
+
+      <div class="df-zones-grid">
+        <div class="df-zone-feature-card" ng-repeat="z in vm.zones">
+          <div class="df-zone-feature-card__icon">
+            <i class="fa-solid {{z.icon}}"></i>
+          </div>
+          <h3 class="df-zone-feature-card__title">{{z.name}}</h3>
+          <span class="df-zone-feature-card__ambiance">{{z.ambiance}}</span>
+          <p class="df-zone-feature-card__desc">{{z.description}}</p>
+          <div class="df-zone-feature-card__footer">
+            <span class="df-zone-tables-tag">{{z.tables}}</span>
+            <a href="#/tables" class="df-link-arrow">
+              <span>View Tables</span>
+              <i class="fa-solid fa-chevron-right"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Guest Testimonials -->
+  <section class="df-section df-section--testimonials">
+    <div class="df-container">
+      <div class="df-section-header text-center">
+        <span class="df-section-eyebrow">Diner Stories</span>
+        <h2 class="df-section-title">Praised by Connoisseurs</h2>
+      </div>
+
+      <div class="df-testimonials-grid">
+        <div class="df-testimonial-card" ng-repeat="t in vm.testimonials">
+          <div class="df-testimonial-stars" aria-label="5 stars">
+            <i class="fa-solid fa-star" ng-repeat="n in [1,2,3,4,5]"></i>
+          </div>
+          <p class="df-testimonial-quote">&ldquo;{{t.quote}}&rdquo;</p>
+          <div class="df-testimonial-author">
+            <div class="df-testimonial-avatar">
+              <i class="fa-solid fa-user"></i>
+            </div>
+            <div>
+              <div class="df-testimonial-name">{{t.author}}</div>
+              <div class="df-testimonial-role">{{t.role}}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Banner Section -->
+  <section class="df-cta-banner">
+    <div class="df-container">
+      <div class="df-cta-banner__card">
+        <div class="df-cta-banner__content">
+          <span class="df-section-eyebrow text-terracotta">Reserve In Seconds</span>
+          <h2 class="df-cta-banner__title">Join Us For An Unrivaled Culinary Journey</h2>
+          <p class="df-cta-banner__subtitle">
+            Instant table selection, live availability updates, and custom dietary requests.
+          </p>
+          <div class="df-cta-banner__buttons">
+            <a href="#/book" class="df-btn df-btn-lg df-btn-terracotta">
+              <i class="fa-solid fa-calendar-check"></i>
+              <span>Book Your Table Now</span>
+            </a>
+            <a href="#/dashboard" class="df-btn df-btn-lg df-btn-outline">
+              <i class="fa-solid fa-chart-pie"></i>
+              <span>Staff Management Dashboard</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>

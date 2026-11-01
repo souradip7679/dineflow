@@ -1,0 +1,351 @@
+<!-- DineFlow - Reservation Booking View -->
+<div class="df-booking-view">
+  <div class="df-container">
+
+    <!-- Page Header -->
+    <div class="df-page-header text-center">
+      <span class="df-section-eyebrow">Table Reservation</span>
+      <h1 class="df-page-title">Reserve Your Table</h1>
+      <p class="df-page-subtitle">
+        Book your preferred dining table in real-time. Capacity checks and anti-conflict scheduling guaranteed.
+      </p>
+    </div>
+
+    <!-- Booking Confirmation Receipt (Rendered upon successful reservation) -->
+    <div class="df-receipt-card" ng-if="vm.bookingSuccess">
+      <div class="df-receipt-header">
+        <div class="df-receipt-badge">
+          <i class="fa-solid fa-circle-check"></i>
+          <span>Reservation Confirmed</span>
+        </div>
+        <h2 class="df-receipt-title">Thank You, {{vm.confirmedReservation.customerName}}!</h2>
+        <p class="df-receipt-ref">
+          Booking Reference: <strong>{{vm.confirmedReservation.id}}</strong>
+        </p>
+      </div>
+
+      <div class="df-receipt-body">
+        <div class="df-receipt-details-grid">
+          <div class="df-receipt-item">
+            <span class="df-receipt-label"><i class="fa-solid fa-calendar-day"></i> Date</span>
+            <span class="df-receipt-val">{{vm.confirmedReservation.date | friendlyDate}}</span>
+          </div>
+          <div class="df-receipt-item">
+            <span class="df-receipt-label"><i class="fa-solid fa-clock"></i> Time</span>
+            <span class="df-receipt-val">{{vm.confirmedReservation.time | time12}}</span>
+          </div>
+          <div class="df-receipt-item">
+            <span class="df-receipt-label"><i class="fa-solid fa-users"></i> Party Size</span>
+            <span class="df-receipt-val">{{vm.confirmedReservation.guests | seatsLabel}}</span>
+          </div>
+          <div class="df-receipt-item">
+            <span class="df-receipt-label"><i class="fa-solid fa-table-cells"></i> Assigned Table</span>
+            <span class="df-receipt-val">{{vm.confirmedTable.number}} ({{vm.confirmedTable.zone}})</span>
+          </div>
+          <div class="df-receipt-item">
+            <span class="df-receipt-label"><i class="fa-solid fa-glass-cheers"></i> Occasion</span>
+            <span class="df-receipt-val">{{vm.confirmedReservation.occasion || 'Dining'}}</span>
+          </div>
+          <div class="df-receipt-item">
+            <span class="df-receipt-label"><i class="fa-solid fa-phone"></i> Contact Phone</span>
+            <span class="df-receipt-val">{{vm.confirmedReservation.phone}}</span>
+          </div>
+        </div>
+
+        <div class="df-receipt-notes" ng-if="vm.confirmedReservation.specialRequests">
+          <strong>Special Requests / Dietary Notes:</strong>
+          <p>{{vm.confirmedReservation.specialRequests}}</p>
+        </div>
+
+        <div class="df-receipt-tip">
+          <i class="fa-solid fa-circle-info"></i>
+          <span>A confirmation copy has been persisted locally in your browser storage. Your table will be held for up to 15 minutes past reservation time.</span>
+        </div>
+      </div>
+
+      <div class="df-receipt-footer">
+        <button type="button" class="df-btn df-btn-forest" ng-click="vm.viewInReservations()">
+          <i class="fa-solid fa-list-check"></i>
+          <span>View In Reservations</span>
+        </button>
+        <button type="button" class="df-btn df-btn-outline" ng-click="vm.bookAnother()">
+          <i class="fa-solid fa-plus"></i>
+          <span>Make Another Booking</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Booking Form Container (Rendered when not in success state) -->
+    <div class="df-booking-layout" ng-if="!vm.bookingSuccess">
+
+      <!-- Left Column: Primary Booking Form -->
+      <div class="df-booking-form-col">
+        <div class="df-card df-booking-form-card">
+          <div class="df-card-header">
+            <h2 class="df-card-title">
+              <i class="fa-solid fa-calendar-check text-terracotta"></i>
+              <span>Reservation Details</span>
+            </h2>
+            <p class="df-card-desc">All fields marked with an asterisk (*) are required.</p>
+          </div>
+
+          <form name="bookingForm" class="df-form" ng-submit="vm.submitBooking(bookingForm.$valid)" novalidate>
+            
+            <!-- Step 1: Schedule & Guests -->
+            <div class="df-form-section">
+              <h3 class="df-form-section-title">
+                <span class="df-step-num">1</span>
+                <span>When &amp; Party Size</span>
+              </h3>
+
+              <div class="df-form-row">
+                <div class="df-form-group col-md-4">
+                  <label for="bookDate" class="df-label">
+                    <span>Date *</span>
+                  </label>
+                  <input type="date"
+                         id="bookDate"
+                         name="bookDate"
+                         class="df-input"
+                         ng-model="vm.form.date"
+                         min="{{vm.minDate}}"
+                         ng-change="vm.updateEligibleTables()"
+                         required>
+                  <div class="df-field-error" ng-if="bookingForm.bookDate.$dirty && bookingForm.bookDate.$invalid">
+                    <span ng-if="bookingForm.bookDate.$error.required">Please select a reservation date.</span>
+                  </div>
+                </div>
+
+                <div class="df-form-group col-md-4">
+                  <label for="bookTime" class="df-label">
+                    <span>Time Slot *</span>
+                  </label>
+                  <select id="bookTime"
+                          name="bookTime"
+                          class="df-select"
+                          ng-model="vm.form.time"
+                          ng-change="vm.updateEligibleTables()"
+                          required>
+                    <option value="" disabled>Select Time</option>
+                    <option ng-repeat="slot in vm.timeSlots" value="{{slot}}">{{slot | time12}}</option>
+                  </select>
+                  <div class="df-field-error" ng-if="bookingForm.bookTime.$dirty && bookingForm.bookTime.$invalid">
+                    <span>Please select a dining time slot.</span>
+                  </div>
+                </div>
+
+                <div class="df-form-group col-md-4">
+                  <label for="bookGuests" class="df-label">
+                    <span>Party Size *</span>
+                  </label>
+                  <select id="bookGuests"
+                          name="bookGuests"
+                          class="df-select"
+                          ng-model="vm.form.guests"
+                          ng-change="vm.updateEligibleTables()"
+                          required>
+                    <option ng-repeat="g in vm.guestOptions" ng-value="g">{{g | seatsLabel}}</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 2: Table Selection (Dynamic check against capacity and conflict) -->
+            <div class="df-form-section">
+              <h3 class="df-form-section-title">
+                <span class="df-step-num">2</span>
+                <span>Select Your Preferred Table *</span>
+              </h3>
+              
+              <div class="df-table-selector-info">
+                <span>Showing <strong>{{vm.eligibleTables.length}}</strong> tables matching your party of {{vm.form.guests}} on {{vm.form.date | friendlyDate}} at {{vm.form.time | time12}}</span>
+              </div>
+
+              <!-- Empty state if no table fits -->
+              <div class="df-alert df-alert-warning" ng-if="vm.eligibleTables.length === 0">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <div>
+                  <strong>No tables currently available for this party size and time slot.</strong>
+                  <p class="mb-0">Please adjust your requested time by 30-60 minutes, or choose a smaller party size.</p>
+                </div>
+              </div>
+
+              <!-- Interactive Table Radio Cards -->
+              <div class="df-table-selector-grid" ng-if="vm.eligibleTables.length > 0">
+                <div class="df-table-select-card"
+                     ng-repeat="tbl in vm.eligibleTables"
+                     ng-class="{'selected': vm.form.tableId === tbl.id}"
+                     ng-click="vm.selectTable(tbl)">
+                  <div class="df-table-select-card__radio">
+                    <i class="fa-solid" ng-class="vm.form.tableId === tbl.id ? 'fa-circle-dot text-terracotta' : 'fa-circle text-muted'"></i>
+                  </div>
+                  <div class="df-table-select-card__details">
+                    <div class="df-table-select-card__num">{{tbl.number}}</div>
+                    <div class="df-table-select-card__zone">{{tbl.zone}}</div>
+                    <div class="df-table-select-card__cap">
+                      <i class="fa-solid fa-users"></i> Up to {{tbl.capacity}} guests &bull; {{tbl.shape}}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="df-field-error" ng-if="bookingForm.$submitted && !vm.form.tableId">
+                <span>Please select a table to complete your booking.</span>
+              </div>
+            </div>
+
+            <!-- Step 3: Guest Information -->
+            <div class="df-form-section">
+              <h3 class="df-form-section-title">
+                <span class="df-step-num">3</span>
+                <span>Guest Information</span>
+              </h3>
+
+              <div class="df-form-row">
+                <div class="df-form-group col-md-6">
+                  <label for="customerName" class="df-label">Full Name *</label>
+                  <input type="text"
+                         id="customerName"
+                         name="customerName"
+                         class="df-input"
+                         placeholder="e.g. Eleanor Vance"
+                         ng-model="vm.form.customerName"
+                         required>
+                  <div class="df-field-error" ng-if="bookingForm.customerName.$dirty && bookingForm.customerName.$invalid">
+                    <span>Full name is required.</span>
+                  </div>
+                </div>
+
+                <div class="df-form-group col-md-6">
+                  <label for="customerEmail" class="df-label">Email Address *</label>
+                  <input type="email"
+                         id="customerEmail"
+                         name="customerEmail"
+                         class="df-input"
+                         placeholder="e.g. eleanor@example.com"
+                         ng-model="vm.form.email"
+                         required>
+                  <div class="df-field-error" ng-if="bookingForm.customerEmail.$dirty && bookingForm.customerEmail.$invalid">
+                    <span ng-if="bookingForm.customerEmail.$error.required">Email address is required.</span>
+                    <span ng-if="bookingForm.customerEmail.$error.email">Please enter a valid email format.</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="df-form-row">
+                <div class="df-form-group col-md-6">
+                  <label for="customerPhone" class="df-label">Phone Number *</label>
+                  <input type="tel"
+                         id="customerPhone"
+                         name="customerPhone"
+                         class="df-input"
+                         placeholder="e.g. +1 (555) 234-8901"
+                         ng-model="vm.form.phone"
+                         required>
+                  <div class="df-field-error" ng-if="bookingForm.customerPhone.$dirty && bookingForm.customerPhone.$invalid">
+                    <span>Phone number is required for SMS confirmation.</span>
+                  </div>
+                </div>
+
+                <div class="df-form-group col-md-6">
+                  <label for="occasionSelect" class="df-label">Dining Occasion</label>
+                  <select id="occasionSelect" class="df-select" ng-model="vm.form.occasion">
+                    <option ng-repeat="occ in vm.occasions" value="{{occ}}">{{occ}}</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="df-form-group">
+                <label for="specialRequests" class="df-label">Special Requests / Dietary Restrictions</label>
+                <textarea id="specialRequests"
+                          class="df-textarea"
+                          rows="3"
+                          placeholder="e.g., Anniversary dessert surprise, quiet corner preferred, 1 guest has shellfish allergy..."
+                          ng-model="vm.form.specialRequests"></textarea>
+                <span class="df-input-hint">We do our absolute best to honor seating and dietary notes.</span>
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="df-form-actions">
+              <button type="submit"
+                      class="df-btn df-btn-lg df-btn-terracotta df-btn-block"
+                      ng-disabled="vm.isSubmitting || vm.eligibleTables.length === 0">
+                <i class="fa-solid fa-spinner fa-spin" ng-if="vm.isSubmitting"></i>
+                <i class="fa-solid fa-calendar-check" ng-if="!vm.isSubmitting"></i>
+                <span ng-if="!vm.isSubmitting">Confirm Reservation</span>
+                <span ng-if="vm.isSubmitting">Validating &amp; Booking...</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Right Column: Live Booking Summary & Guidelines -->
+      <div class="df-booking-sidebar-col">
+        <!-- Live Summary Card -->
+        <div class="df-card df-summary-card">
+          <div class="df-card-header">
+            <h3 class="df-card-title"><i class="fa-solid fa-receipt"></i> Booking Summary</h3>
+          </div>
+          <div class="df-summary-list">
+            <div class="df-summary-row">
+              <span class="df-summary-lbl"><i class="fa-solid fa-calendar"></i> Date:</span>
+              <span class="df-summary-val">{{vm.form.date | friendlyDate}}</span>
+            </div>
+            <div class="df-summary-row">
+              <span class="df-summary-lbl"><i class="fa-solid fa-clock"></i> Time:</span>
+              <span class="df-summary-val">{{vm.form.time | time12}}</span>
+            </div>
+            <div class="df-summary-row">
+              <span class="df-summary-lbl"><i class="fa-solid fa-users"></i> Guests:</span>
+              <span class="df-summary-val">{{vm.form.guests | seatsLabel}}</span>
+            </div>
+            <div class="df-summary-row" ng-if="vm.getSelectedTable()">
+              <span class="df-summary-lbl"><i class="fa-solid fa-table-cells"></i> Table:</span>
+              <span class="df-summary-val font-weight-bold text-terracotta">
+                {{vm.getSelectedTable().number}} ({{vm.getSelectedTable().zone}})
+              </span>
+            </div>
+            <div class="df-summary-row" ng-if="vm.form.occasion">
+              <span class="df-summary-lbl"><i class="fa-solid fa-champagne-glasses"></i> Occasion:</span>
+              <span class="df-summary-val">{{vm.form.occasion}}</span>
+            </div>
+          </div>
+
+          <div class="df-summary-table-preview" ng-if="vm.getSelectedTable()">
+            <div class="df-preview-badge">Selected Table Details</div>
+            <p class="df-preview-desc">{{vm.getSelectedTable().description}}</p>
+          </div>
+
+          <div class="df-summary-guarantees">
+            <div class="df-guarantee-item">
+              <i class="fa-solid fa-shield-check text-emerald"></i>
+              <span>No Overlapping Double-Bookings</span>
+            </div>
+            <div class="df-guarantee-item">
+              <i class="fa-solid fa-arrow-rotate-left text-primary"></i>
+              <span>Free Modification &amp; Cancellation</span>
+            </div>
+            <div class="df-guarantee-item">
+              <i class="fa-solid fa-envelope-circle-check text-warning"></i>
+              <span>Instant Confirmation Reference</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dining Policies Card -->
+        <div class="df-card df-policy-card mt-3">
+          <h4 class="df-policy-title"><i class="fa-solid fa-circle-exclamation"></i> Reservation Policy</h4>
+          <ul class="df-policy-list">
+            <li>Tables are held for a maximum of 15 minutes past scheduled time.</li>
+            <li>Standard seating duration is 90 minutes.</li>
+            <li>Parties of 6+ are subject to 18% gratuity for dedicated service.</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>

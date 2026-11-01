@@ -1,0 +1,405 @@
+<!-- DineFlow - Reservations Management View -->
+<div class="df-reservations-view">
+  <div class="df-container">
+
+    <!-- Page Header & Action Bar -->
+    <div class="df-page-header df-page-header--actions">
+      <div>
+        <span class="df-section-eyebrow">Front of House Operations</span>
+        <h1 class="df-page-title">Reservation Management</h1>
+        <p class="df-page-subtitle">
+          Search, filter, update, and manage all guest reservations with synchronized table statuses.
+        </p>
+      </div>
+      <div class="df-header-actions">
+        <button type="button" class="df-btn df-btn-outline" ng-click="vm.exportToCSV()" title="Export filtered records to CSV">
+          <i class="fa-solid fa-file-csv"></i>
+          <span>Export CSV</span>
+        </button>
+        <a href="#/book" class="df-btn df-btn-terracotta">
+          <i class="fa-solid fa-plus"></i>
+          <span>New Reservation</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Filter & Search Toolbar Card -->
+    <div class="df-card df-toolbar-card mb-4">
+      <div class="df-toolbar-row">
+        <!-- Search Input -->
+        <div class="df-search-input-wrap">
+          <i class="fa-solid fa-magnifying-glass df-search-icon"></i>
+          <input type="text"
+                 class="df-input df-search-input"
+                 placeholder="Search by customer name, ID (e.g. DF-1001), phone, or email..."
+                 ng-model="vm.searchQuery"
+                 ng-change="vm.refresh()">
+          <button type="button" class="df-search-clear" ng-if="vm.searchQuery" ng-click="vm.searchQuery = ''; vm.refresh()">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <!-- Date Filter Dropdown -->
+        <div class="df-toolbar-date-filter">
+          <label class="df-toolbar-label"><i class="fa-solid fa-calendar"></i> Date:</label>
+          <select class="df-select df-select-sm" ng-model="vm.dateFilter" ng-change="vm.refresh()">
+            <option value="All">All Dates</option>
+            <option value="Today">Today Only</option>
+            <option value="Tomorrow">Tomorrow</option>
+            <option value="Upcoming">Upcoming (Future)</option>
+            <option value="Past">Past Records</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Status Filter Tabs -->
+      <div class="df-status-filter-tabs">
+        <button type="button"
+                class="df-tab-btn"
+                ng-class="{'active': vm.statusFilter === 'All'}"
+                ng-click="vm.setStatusFilter('All')">
+          <span>All Bookings</span>
+          <span class="df-tab-count">{{vm.statusCounts.all}}</span>
+        </button>
+        <button type="button"
+                class="df-tab-btn df-tab-confirmed"
+                ng-class="{'active': vm.statusFilter === 'Confirmed'}"
+                ng-click="vm.setStatusFilter('Confirmed')">
+          <span class="df-badge-dot"></span>
+          <span>Confirmed</span>
+          <span class="df-tab-count">{{vm.statusCounts.confirmed}}</span>
+        </button>
+        <button type="button"
+                class="df-tab-btn df-tab-pending"
+                ng-class="{'active': vm.statusFilter === 'Pending'}"
+                ng-click="vm.setStatusFilter('Pending')">
+          <span class="df-badge-dot"></span>
+          <span>Pending</span>
+          <span class="df-tab-count">{{vm.statusCounts.pending}}</span>
+        </button>
+        <button type="button"
+                class="df-tab-btn df-tab-completed"
+                ng-class="{'active': vm.statusFilter === 'Completed'}"
+                ng-click="vm.setStatusFilter('Completed')">
+          <span class="df-badge-dot"></span>
+          <span>Completed</span>
+          <span class="df-tab-count">{{vm.statusCounts.completed}}</span>
+        </button>
+        <button type="button"
+                class="df-tab-btn df-tab-cancelled"
+                ng-class="{'active': vm.statusFilter === 'Cancelled'}"
+                ng-click="vm.setStatusFilter('Cancelled')">
+          <span class="df-badge-dot"></span>
+          <span>Cancelled</span>
+          <span class="df-tab-count">{{vm.statusCounts.cancelled}}</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Empty State: No Reservations Matching Filter -->
+    <div class="df-empty-state" ng-if="vm.filteredReservations.length === 0">
+      <div class="df-empty-state__icon">
+        <i class="fa-solid fa-calendar-xmark"></i>
+      </div>
+      <h3 class="df-empty-state__title">No Reservations Found</h3>
+      <p class="df-empty-state__desc">
+        No booking records match your current search query "{{vm.searchQuery}}" or status filter "{{vm.statusFilter}}".
+      </p>
+      <div class="df-empty-state__actions">
+        <button type="button" class="df-btn df-btn-outline" ng-click="vm.clearFilters()">
+          <i class="fa-solid fa-filter-circle-xmark"></i>
+          <span>Clear Filters</span>
+        </button>
+        <a href="#/book" class="df-btn df-btn-terracotta">
+          <i class="fa-solid fa-plus"></i>
+          <span>Create New Reservation</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Reservations Data Table (Desktop / Tablet) & Card List (Mobile) -->
+    <div class="df-card df-table-responsive-card" ng-if="vm.filteredReservations.length > 0">
+      <div class="df-table-header-info">
+        <span>Showing <strong>{{vm.filteredReservations.length}}</strong> reservations</span>
+      </div>
+
+      <div class="df-table-responsive">
+        <table class="df-data-table" aria-label="Reservations List">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Guest Details</th>
+              <th>Date &amp; Time</th>
+              <th>Guests</th>
+              <th>Table</th>
+              <th>Status</th>
+              <th>Occasion</th>
+              <th class="text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="res in vm.filteredReservations" class="df-table-row">
+              <!-- ID -->
+              <td class="font-weight-bold text-terracotta">
+                <span class="df-res-id" ng-click="vm.openDetailsModal(res)">{{res.id}}</span>
+              </td>
+
+              <!-- Guest Info -->
+              <td>
+                <div class="df-diner-info">
+                  <span class="df-diner-name" ng-click="vm.openDetailsModal(res)">{{res.customerName}}</span>
+                  <span class="df-diner-contact">
+                    <i class="fa-solid fa-envelope"></i> {{res.email}}
+                  </span>
+                  <span class="df-diner-contact">
+                    <i class="fa-solid fa-phone"></i> {{res.phone}}
+                  </span>
+                </div>
+              </td>
+
+              <!-- Date & Time -->
+              <td>
+                <div class="df-datetime-cell">
+                  <span class="df-date-badge">{{res.date | friendlyDate}}</span>
+                  <span class="df-time-badge"><i class="fa-solid fa-clock"></i> {{res.time | time12}}</span>
+                </div>
+              </td>
+
+              <!-- Guests -->
+              <td>
+                <span class="df-guests-badge">
+                  <i class="fa-solid fa-user-group"></i> {{res.guests}}
+                </span>
+              </td>
+
+              <!-- Table -->
+              <td>
+                <div class="df-table-badge-info">
+                  <strong>{{vm.getTableInfo(res.tableId).number}}</strong>
+                  <span class="df-zone-sub">{{vm.getTableInfo(res.tableId).zone}}</span>
+                </div>
+              </td>
+
+              <!-- Status -->
+              <td>
+                <status-badge status="res.status" size="sm"></status-badge>
+              </td>
+
+              <!-- Occasion -->
+              <td>
+                <span class="df-occasion-tag">{{res.occasion || 'Dining'}}</span>
+              </td>
+
+              <!-- Actions -->
+              <td class="text-right">
+                <div class="df-action-btn-group">
+                  <!-- View Details -->
+                  <button type="button"
+                          class="df-btn-icon"
+                          title="View Details"
+                          ng-click="vm.openDetailsModal(res)">
+                    <i class="fa-solid fa-eye"></i>
+                  </button>
+
+                  <!-- Edit -->
+                  <button type="button"
+                          class="df-btn-icon df-btn-icon--primary"
+                          title="Edit Booking"
+                          ng-click="vm.openEditModal(res)"
+                          ng-if="res.status !== 'Cancelled'">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                  </button>
+
+                  <!-- Mark Completed -->
+                  <button type="button"
+                          class="df-btn-icon df-btn-icon--success"
+                          title="Mark Dining Completed"
+                          ng-click="vm.markAsCompleted(res)"
+                          ng-if="res.status === 'Confirmed'">
+                    <i class="fa-solid fa-check"></i>
+                  </button>
+
+                  <!-- Cancel -->
+                  <button type="button"
+                          class="df-btn-icon df-btn-icon--danger"
+                          title="Cancel Reservation"
+                          ng-click="vm.openCancelModal(res)"
+                          ng-if="res.status !== 'Cancelled'">
+                    <i class="fa-solid fa-ban"></i>
+                  </button>
+
+                  <!-- Delete -->
+                  <button type="button"
+                          class="df-btn-icon df-btn-icon--muted"
+                          title="Delete Record"
+                          ng-click="vm.deleteReservation(res)">
+                    <i class="fa-solid fa-trash-can"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- Modal: View Reservation Details                           -->
+    <!-- ========================================================= -->
+    <modal-dialog is-open="vm.showDetailsModal"
+                  title="Reservation {{vm.selectedReservation.id}}"
+                  size="md"
+                  on-close="vm.closeDetailsModal()">
+      <div class="df-modal-res-details" ng-if="vm.selectedReservation">
+        <div class="df-detail-header-card">
+          <div class="df-detail-header-main">
+            <h3>{{vm.selectedReservation.customerName}}</h3>
+            <span class="text-muted">{{vm.selectedReservation.email}} &bull; {{vm.selectedReservation.phone}}</span>
+          </div>
+          <status-badge status="vm.selectedReservation.status" size="md"></status-badge>
+        </div>
+
+        <div class="df-detail-grid mt-3">
+          <div class="df-detail-card">
+            <span class="df-detail-label"><i class="fa-solid fa-calendar"></i> Date</span>
+            <span class="df-detail-val">{{vm.selectedReservation.date | friendlyDate}}</span>
+          </div>
+          <div class="df-detail-card">
+            <span class="df-detail-label"><i class="fa-solid fa-clock"></i> Time</span>
+            <span class="df-detail-val">{{vm.selectedReservation.time | time12}}</span>
+          </div>
+          <div class="df-detail-card">
+            <span class="df-detail-label"><i class="fa-solid fa-users"></i> Guests</span>
+            <span class="df-detail-val">{{vm.selectedReservation.guests | seatsLabel}}</span>
+          </div>
+          <div class="df-detail-card">
+            <span class="df-detail-label"><i class="fa-solid fa-table-cells"></i> Assigned Table</span>
+            <span class="df-detail-val">{{vm.selectedTable.number}} ({{vm.selectedTable.zone}})</span>
+          </div>
+          <div class="df-detail-card">
+            <span class="df-detail-label"><i class="fa-solid fa-glass-cheers"></i> Occasion</span>
+            <span class="df-detail-val">{{vm.selectedReservation.occasion || 'Casual Dining'}}</span>
+          </div>
+          <div class="df-detail-card">
+            <span class="df-detail-label"><i class="fa-solid fa-clock-rotate-left"></i> Booked At</span>
+            <span class="df-detail-val">{{vm.selectedReservation.createdAt | date:'short'}}</span>
+          </div>
+        </div>
+
+        <div class="df-detail-notes mt-3" ng-if="vm.selectedReservation.specialRequests">
+          <strong>Special Requests &amp; Dietary Restrictions:</strong>
+          <p>{{vm.selectedReservation.specialRequests}}</p>
+        </div>
+
+        <div class="df-detail-notes df-detail-notes--cancelled mt-3" ng-if="vm.selectedReservation.cancellationReason">
+          <strong class="text-danger"><i class="fa-solid fa-triangle-exclamation"></i> Cancellation Reason:</strong>
+          <p>{{vm.selectedReservation.cancellationReason}}</p>
+        </div>
+
+        <div class="df-modal-actions mt-4 text-right">
+          <button type="button" class="df-btn df-btn-outline" ng-click="vm.closeDetailsModal()">Close</button>
+          <button type="button" class="df-btn df-btn-primary" ng-click="vm.closeDetailsModal(); vm.openEditModal(vm.selectedReservation)">
+            <i class="fa-solid fa-pen"></i> Edit
+          </button>
+        </div>
+      </div>
+    </modal-dialog>
+
+    <!-- ========================================================= -->
+    <!-- Modal: Edit Reservation                                   -->
+    <!-- ========================================================= -->
+    <modal-dialog is-open="vm.showEditModal"
+                  title="Edit Reservation {{vm.selectedReservation.id}}"
+                  size="md"
+                  on-close="vm.closeEditModal()">
+      <div class="df-modal-edit-form" ng-if="vm.showEditModal">
+        <form name="editResForm" ng-submit="vm.saveEditReservation()">
+          <div class="df-form-row">
+            <div class="df-form-group col-md-6">
+              <label class="df-label">Customer Name</label>
+              <input type="text" class="df-input" ng-model="vm.editForm.customerName" required>
+            </div>
+            <div class="df-form-group col-md-6">
+              <label class="df-label">Phone Number</label>
+              <input type="text" class="df-input" ng-model="vm.editForm.phone" required>
+            </div>
+          </div>
+
+          <div class="df-form-row">
+            <div class="df-form-group col-md-4">
+              <label class="df-label">Date</label>
+              <input type="date" class="df-input" ng-model="vm.editForm.date" required>
+            </div>
+            <div class="df-form-group col-md-4">
+              <label class="df-label">Time Slot</label>
+              <input type="time" class="df-input" ng-model="vm.editForm.time" required>
+            </div>
+            <div class="df-form-group col-md-4">
+              <label class="df-label">Guests</label>
+              <input type="number" min="1" max="10" class="df-input" ng-model="vm.editForm.guests" required>
+            </div>
+          </div>
+
+          <div class="df-form-row">
+            <div class="df-form-group col-md-6">
+              <label class="df-label">Status</label>
+              <select class="df-select" ng-model="vm.editForm.status">
+                <option value="Confirmed">Confirmed</option>
+                <option value="Pending">Pending</option>
+                <option value="Completed">Completed</option>
+                <option value="Cancelled">Cancelled</option>
+              </select>
+            </div>
+            <div class="df-form-group col-md-6">
+              <label class="df-label">Table</label>
+              <select class="df-select" ng-model="vm.editForm.tableId">
+                <option ng-repeat="tbl in vm.allReservations" ng-value="tbl.id">
+                  Table {{tbl.number || tbl.id}}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="df-form-group">
+            <label class="df-label">Special Requests</label>
+            <textarea class="df-textarea" rows="2" ng-model="vm.editForm.specialRequests"></textarea>
+          </div>
+
+          <div class="df-modal-actions text-right mt-3">
+            <button type="button" class="df-btn df-btn-outline" ng-click="vm.closeEditModal()">Cancel</button>
+            <button type="submit" class="df-btn df-btn-terracotta">Save Changes</button>
+          </div>
+        </form>
+      </div>
+    </modal-dialog>
+
+    <!-- ========================================================= -->
+    <!-- Modal: Cancel Reservation Confirmation                    -->
+    <!-- ========================================================= -->
+    <modal-dialog is-open="vm.showCancelModal"
+                  title="Cancel Reservation {{vm.selectedReservation.id}}"
+                  size="sm"
+                  on-close="vm.closeCancelModal()">
+      <div class="df-modal-cancel-body" ng-if="vm.showCancelModal">
+        <div class="df-alert df-alert-danger mb-3">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+          <div>
+            <strong>Are you sure you want to cancel this reservation?</strong>
+            <p class="mb-0">This will change the status to Cancelled and release the dining table.</p>
+          </div>
+        </div>
+
+        <div class="df-form-group">
+          <label class="df-label">Reason for Cancellation:</label>
+          <input type="text" class="df-input" ng-model="vm.cancelReason" placeholder="e.g., Guest phoned to cancel, flight delay, etc.">
+        </div>
+
+        <div class="df-modal-actions text-right mt-3">
+          <button type="button" class="df-btn df-btn-outline" ng-click="vm.closeCancelModal()">Keep Booking</button>
+          <button type="button" class="df-btn df-btn-danger" ng-click="vm.confirmCancellation()">Confirm Cancellation</button>
+        </div>
+      </div>
+    </modal-dialog>
+
+  </div>
+</div>

@@ -1,0 +1,231 @@
+<!-- DineFlow - Interactive Table Layout View -->
+<div class="df-tables-view">
+  <div class="df-container">
+
+    <!-- Page Header -->
+    <div class="df-page-header df-page-header--actions">
+      <div>
+        <span class="df-section-eyebrow">Restaurant Floor Plan</span>
+        <h1 class="df-page-title">Interactive Table Management</h1>
+        <p class="df-page-subtitle">
+          Real-time spatial floor map showing table capacity, live occupancy status, and table turnarounds.
+        </p>
+      </div>
+      <div class="df-header-actions">
+        <a href="#/book" class="df-btn df-btn-terracotta">
+          <i class="fa-solid fa-calendar-plus"></i>
+          <span>Book a Table</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Status Legend & Counters Bar -->
+    <div class="df-card df-legend-card mb-4">
+      <div class="df-legend-title">
+        <i class="fa-solid fa-compass"></i>
+        <span>Live Floor Status:</span>
+      </div>
+      <div class="df-legend-items">
+        <div class="df-legend-pill df-legend-pill--available"
+             ng-class="{'active': vm.statusFilter === 'Available'}"
+             ng-click="vm.setStatusFilter(vm.statusFilter === 'Available' ? 'All' : 'Available')">
+          <span class="df-badge-dot"></span>
+          <span class="df-legend-name">Available</span>
+          <span class="df-legend-count">{{vm.statusCounts.available}}</span>
+        </div>
+        <div class="df-legend-pill df-legend-pill--reserved"
+             ng-class="{'active': vm.statusFilter === 'Reserved'}"
+             ng-click="vm.setStatusFilter(vm.statusFilter === 'Reserved' ? 'All' : 'Reserved')">
+          <span class="df-badge-dot"></span>
+          <span class="df-legend-name">Reserved</span>
+          <span class="df-legend-count">{{vm.statusCounts.reserved}}</span>
+        </div>
+        <div class="df-legend-pill df-legend-pill--occupied"
+             ng-class="{'active': vm.statusFilter === 'Occupied'}"
+             ng-click="vm.setStatusFilter(vm.statusFilter === 'Occupied' ? 'All' : 'Occupied')">
+          <span class="df-badge-dot"></span>
+          <span class="df-legend-name">Occupied</span>
+          <span class="df-legend-count">{{vm.statusCounts.occupied}}</span>
+        </div>
+        <div class="df-legend-pill df-legend-pill--cleaning"
+             ng-class="{'active': vm.statusFilter === 'Cleaning'}"
+             ng-click="vm.setStatusFilter(vm.statusFilter === 'Cleaning' ? 'All' : 'Cleaning')">
+          <span class="df-badge-dot"></span>
+          <span class="df-legend-name">Cleaning</span>
+          <span class="df-legend-count">{{vm.statusCounts.cleaning}}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter Toolbar: Dining Zones & Capacity -->
+    <div class="df-card df-table-filters-card mb-4">
+      <div class="df-filters-wrap">
+        <!-- Zone Tabs -->
+        <div class="df-zone-tabs">
+          <button type="button"
+                  class="df-zone-tab-btn"
+                  ng-class="{'active': vm.zoneFilter === 'all'}"
+                  ng-click="vm.setZoneFilter('all')">
+            <i class="fa-solid fa-border-all"></i>
+            <span>All Zones</span>
+          </button>
+          <button type="button"
+                  class="df-zone-tab-btn"
+                  ng-repeat="z in vm.zones"
+                  ng-class="{'active': vm.zoneFilter === z.code}"
+                  ng-click="vm.setZoneFilter(z.code)">
+            <span>{{z.name}}</span>
+            <span class="df-zone-count">({{z.totalTables}})</span>
+          </button>
+        </div>
+
+        <!-- Capacity Dropdown Filter -->
+        <div class="df-capacity-filter">
+          <label class="df-filter-label"><i class="fa-solid fa-users"></i> Capacity:</label>
+          <select class="df-select df-select-sm" ng-model="vm.capacityFilter" ng-change="vm.refresh()">
+            <option value="All">All Sizes</option>
+            <option value="2">2 Guests</option>
+            <option value="4">4 Guests</option>
+            <option value="6+">6+ Guests (Large)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tables Grid Floor Plan -->
+    <div class="df-floor-plan-container">
+      <div class="df-floor-plan-header">
+        <span class="df-floor-count">Showing <strong>{{vm.filteredTables.length}}</strong> of {{vm.allTables.length}} tables</span>
+        <button type="button" class="df-btn df-btn-sm df-btn-outline" ng-if="vm.zoneFilter !== 'all' || vm.statusFilter !== 'All' || vm.capacityFilter !== 'All'" ng-click="vm.clearFilters()">
+          <i class="fa-solid fa-filter-circle-xmark"></i> Reset View
+        </button>
+      </div>
+
+      <!-- Tables Grid rendered via tableCard directive -->
+      <div class="df-tables-grid">
+        <table-card ng-repeat="tbl in vm.filteredTables"
+                    table="tbl"
+                    on-select="vm.openTableModal(table)">
+        </table-card>
+      </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- Modal: Table Details & Live Status Switcher               -->
+    <!-- ========================================================= -->
+    <modal-dialog is-open="vm.showTableModal"
+                  title="Table {{vm.selectedTable.number}} — {{vm.selectedTable.zone}}"
+                  size="md"
+                  on-close="vm.closeTableModal()">
+      <div class="df-modal-table-content" ng-if="vm.selectedTable">
+
+        <!-- Table Information Summary -->
+        <div class="df-table-modal-top">
+          <div class="df-table-modal-visual df-visual-table df-visual-{{vm.selectedTable.shape}}">
+            <span class="df-modal-cap-num">{{vm.selectedTable.capacity}} Seats</span>
+          </div>
+          <div class="df-table-modal-meta">
+            <div class="df-modal-meta-row">
+              <span class="df-meta-label">Zone:</span>
+              <span class="df-meta-val font-weight-bold">{{vm.selectedTable.zone}}</span>
+            </div>
+            <div class="df-modal-meta-row">
+              <span class="df-meta-label">Table Shape:</span>
+              <span class="df-meta-val text-capitalize">{{vm.selectedTable.shape}} Table</span>
+            </div>
+            <div class="df-modal-meta-row">
+              <span class="df-meta-label">Max Seating:</span>
+              <span class="df-meta-val">{{vm.selectedTable.capacity | seatsLabel}}</span>
+            </div>
+            <div class="df-modal-meta-row">
+              <span class="df-meta-label">Current Status:</span>
+              <status-badge status="vm.selectedTable.status" size="sm"></status-badge>
+            </div>
+          </div>
+        </div>
+
+        <p class="df-table-modal-desc mt-3">
+          <i class="fa-solid fa-circle-info text-terracotta"></i>
+          {{vm.selectedTable.description}}
+        </p>
+
+        <hr class="df-divider">
+
+        <!-- Staff Status Switcher Control -->
+        <div class="df-status-switcher-section">
+          <h4 class="df-section-subtitle-sm">
+            <i class="fa-solid fa-hand-pointer"></i> Update Table State:
+          </h4>
+          <div class="df-status-switcher-buttons">
+            <button type="button"
+                    class="df-btn-status df-btn-status--available"
+                    ng-class="{'active': vm.selectedTable.status === 'Available'}"
+                    ng-click="vm.changeTableStatus('Available')">
+              <i class="fa-solid fa-check"></i>
+              <span>Available</span>
+            </button>
+            <button type="button"
+                    class="df-btn-status df-btn-status--reserved"
+                    ng-class="{'active': vm.selectedTable.status === 'Reserved'}"
+                    ng-click="vm.changeTableStatus('Reserved')">
+              <i class="fa-solid fa-bookmark"></i>
+              <span>Reserved</span>
+            </button>
+            <button type="button"
+                    class="df-btn-status df-btn-status--occupied"
+                    ng-class="{'active': vm.selectedTable.status === 'Occupied'}"
+                    ng-click="vm.changeTableStatus('Occupied')">
+              <i class="fa-solid fa-utensils"></i>
+              <span>Occupied</span>
+            </button>
+            <button type="button"
+                    class="df-btn-status df-btn-status--cleaning"
+                    ng-class="{'active': vm.selectedTable.status === 'Cleaning'}"
+                    ng-click="vm.changeTableStatus('Cleaning')">
+              <i class="fa-solid fa-broom"></i>
+              <span>Cleaning</span>
+            </button>
+          </div>
+        </div>
+
+        <hr class="df-divider">
+
+        <!-- Linked Bookings for this Table -->
+        <div class="df-table-linked-bookings">
+          <h4 class="df-section-subtitle-sm">
+            <i class="fa-solid fa-calendar-check"></i> Active Reservations for this Table:
+          </h4>
+          <div class="df-alert df-alert-info" ng-if="vm.selectedTableReservations.length === 0">
+            <i class="fa-solid fa-circle-check"></i>
+            <span>No upcoming reservations scheduled for this table. It is ready for walk-in guests or online booking!</span>
+          </div>
+
+          <div class="df-table-res-list" ng-if="vm.selectedTableReservations.length > 0">
+            <div class="df-table-res-item" ng-repeat="r in vm.selectedTableReservations">
+              <div class="df-res-time-wrap">
+                <span class="df-res-date">{{r.date | friendlyDate}}</span>
+                <span class="df-res-hour">{{r.time | time12}}</span>
+              </div>
+              <div class="df-res-diner-wrap">
+                <strong>{{r.customerName}}</strong>
+                <span class="text-muted">{{r.guests | seatsLabel}} &bull; {{r.occasion || 'Dining'}}</span>
+              </div>
+              <status-badge status="r.status" size="sm"></status-badge>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal Footer Actions -->
+        <div class="df-modal-actions mt-4 text-right">
+          <button type="button" class="df-btn df-btn-outline" ng-click="vm.closeTableModal()">Close</button>
+          <button type="button" class="df-btn df-btn-terracotta" ng-click="vm.bookSelectedTable()">
+            <i class="fa-solid fa-calendar-plus"></i>
+            <span>Book Table {{vm.selectedTable.number}}</span>
+          </button>
+        </div>
+
+      </div>
+    </modal-dialog>
+
+  </div>
+</div>

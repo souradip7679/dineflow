@@ -1,0 +1,21 @@
+{
+  "name": "dineflow",
+  "version": "1.0.0",
+  "description": "DineFlow — Restaurant Reservation & Table Management System built with AngularJS 1.x",
+  "main": "dineflow/index.html",
+  "scripts": {
+    "start": "npx -y serve dineflow -p 3000",
+    "serve": "npx -y serve dineflow -l 3000",
+    "serve:root": "npx -y serve . -l 3000",
+    "python:serve": "python -m http.server 3000 --directory dineflow"
+  },
+  "keywords": [
+    "angularjs",
+    "restaurant-management",
+    "table-reservation",
+    "academic-project",
+    "full-stack-development"
+  ],
+  "author": "Full Stack Development Student",
+  "license": "MIT"
+}

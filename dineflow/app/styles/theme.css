@@ -1,0 +1,170 @@
+/**
+ * DineFlow - Theme & Design System Tokens
+ * Defines CSS custom variables for Light and Dark themes,
+ * typography, elevation shadows, borders, and accessibility preferences.
+ */
+
+:root,
+[data-theme="light"] {
+  /* Brand Color Palette: Warm Ivory, Charcoal, Forest Green, Terracotta */
+  --df-bg-page: #FAF7F2;
+  --df-bg-surface: #FFFFFF;
+  --df-bg-surface-elevated: #FFFFFF;
+  --df-bg-subtle: #F3ECE2;
+  --df-bg-glass: rgba(255, 255, 255, 0.85);
+
+  --df-text-primary: #1C1E21;
+  --df-text-secondary: #5A6068;
+  --df-text-muted: #8E95A0;
+  --df-text-inverse: #FFFFFF;
+
+  --df-border-subtle: #E8E0D5;
+  --df-border-focus: #C85A32;
+
+  /* Primary Brand: Deep Forest Green */
+  --df-forest: #1A3B32;
+  --df-forest-hover: #132D26;
+  --df-forest-light: #E7EFEA;
+
+  /* Accent: Warm Terracotta */
+  --df-terracotta: #C85A32;
+  --df-terracotta-hover: #B24C26;
+  --df-terracotta-light: #FBEFEA;
+
+  /* Accent Gold / Luxury */
+  --df-gold: #C59A45;
+  --df-gold-light: #FBF4E7;
+
+  /* Semantic Statuses */
+  --df-status-available: #10B981;
+  --df-status-available-bg: #ECFDF5;
+  --df-status-available-border: #A7F3D0;
+
+  --df-status-reserved: #3B82F6;
+  --df-status-reserved-bg: #EFF6FF;
+  --df-status-reserved-border: #BFDBFE;
+
+  --df-status-occupied: #F59E0B;
+  --df-status-occupied-bg: #FFFBEB;
+  --df-status-occupied-border: #FDE68A;
+
+  --df-status-cleaning: #8B5CF6;
+  --df-status-cleaning-bg: #F5F3FF;
+  --df-status-cleaning-border: #DDD6FE;
+
+  --df-status-confirmed: #10B981;
+  --df-status-confirmed-bg: #ECFDF5;
+
+  --df-status-pending: #F59E0B;
+  --df-status-pending-bg: #FFFBEB;
+
+  --df-status-cancelled: #EF4444;
+  --df-status-cancelled-bg: #FEF2F2;
+
+  --df-status-completed: #6B7280;
+  --df-status-completed-bg: #F3F4F6;
+
+  /* Shadows & Elevation */
+  --df-shadow-sm: 0 2px 4px rgba(28, 30, 33, 0.05);
+  --df-shadow-md: 0 4px 14px rgba(28, 30, 33, 0.08);
+  --df-shadow-lg: 0 10px 30px rgba(28, 30, 33, 0.12);
+  --df-shadow-card: 0 4px 20px rgba(28, 30, 33, 0.06);
+
+  --df-header-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="dark"] {
+  /* Dark Mode Palette: Deep Charcoal & Rich Accents */
+  --df-bg-page: #101214;
+  --df-bg-surface: #181B1F;
+  --df-bg-surface-elevated: #20242A;
+  --df-bg-subtle: #232830;
+  --df-bg-glass: rgba(24, 27, 31, 0.88);
+
+  --df-text-primary: #F4F5F7;
+  --df-text-secondary: #B0B7C2;
+  --df-text-muted: #757E8C;
+  --df-text-inverse: #101214;
+
+  --df-border-subtle: #2C323C;
+  --df-border-focus: #E26E46;
+
+  /* Primary Brand Forest */
+  --df-forest: #2A5A4D;
+  --df-forest-hover: #377564;
+  --df-forest-light: rgba(42, 90, 77, 0.25);
+
+  /* Terracotta */
+  --df-terracotta: #E26E46;
+  --df-terracotta-hover: #F08059;
+  --df-terracotta-light: rgba(226, 110, 70, 0.2);
+
+  /* Gold */
+  --df-gold: #DFB25E;
+  --df-gold-light: rgba(223, 178, 94, 0.2);
+
+  /* Semantic Statuses Dark */
+  --df-status-available: #34D399;
+  --df-status-available-bg: rgba(52, 211, 153, 0.15);
+  --df-status-available-border: rgba(52, 211, 153, 0.35);
+
+  --df-status-reserved: #60A5FA;
+  --df-status-reserved-bg: rgba(96, 165, 250, 0.15);
+  --df-status-reserved-border: rgba(96, 165, 250, 0.35);
+
+  --df-status-occupied: #FBBF24;
+  --df-status-occupied-bg: rgba(251, 191, 36, 0.15);
+  --df-status-occupied-border: rgba(251, 191, 36, 0.35);
+
+  --df-status-cleaning: #A78BFA;
+  --df-status-cleaning-bg: rgba(167, 139, 250, 0.15);
+  --df-status-cleaning-border: rgba(167, 139, 250, 0.35);
+
+  --df-status-confirmed: #34D399;
+  --df-status-confirmed-bg: rgba(52, 211, 153, 0.15);
+
+  --df-status-pending: #FBBF24;
+  --df-status-pending-bg: rgba(251, 191, 36, 0.15);
+
+  --df-status-cancelled: #F87171;
+  --df-status-cancelled-bg: rgba(248, 113, 113, 0.15);
+
+  --df-status-completed: #9CA3AF;
+  --df-status-completed-bg: rgba(156, 163, 175, 0.15);
+
+  /* Shadows Dark */
+  --df-shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+  --df-shadow-md: 0 4px 14px rgba(0, 0, 0, 0.4);
+  --df-shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.55);
+  --df-shadow-card: 0 4px 20px rgba(0, 0, 0, 0.35);
+
+  --df-header-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+}
+
+/* Global Font Tokens & Metrics */
+:root {
+  --df-font-display: 'Playfair Display', Georgia, serif;
+  --df-font-body: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  --df-radius-sm: 6px;
+  --df-radius-md: 10px;
+  --df-radius-lg: 16px;
+  --df-radius-xl: 24px;
+  --df-radius-full: 9999px;
+
+  --df-transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --df-transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --df-transition-smooth: 350ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Accessibility: Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

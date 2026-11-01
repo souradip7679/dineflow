@@ -1,0 +1,240 @@
+<!-- DineFlow - Management Dashboard View -->
+<div class="df-dashboard-view">
+  <div class="df-container">
+
+    <!-- Page Header & Quick Actions -->
+    <div class="df-page-header df-page-header--actions">
+      <div>
+        <span class="df-section-eyebrow">Executive Management &amp; Analytics</span>
+        <h1 class="df-page-title">Operations Dashboard</h1>
+        <p class="df-page-subtitle">
+          Real-time metrics calculated dynamically from active reservation registers and table states.
+        </p>
+      </div>
+      <div class="df-header-actions">
+        <button type="button" class="df-btn df-btn-outline" ng-click="vm.loadDashboard()" title="Recalculate metrics">
+          <i class="fa-solid fa-arrows-rotate"></i>
+          <span>Refresh</span>
+        </button>
+        <a href="#/tables" class="df-btn df-btn-forest">
+          <i class="fa-solid fa-table-cells"></i>
+          <span>Floor Plan</span>
+        </a>
+        <a href="#/book" class="df-btn df-btn-terracotta">
+          <i class="fa-solid fa-plus"></i>
+          <span>New Reservation</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- KPI Metric Cards Grid (Demonstrates reusable stat-card directives) -->
+    <div class="df-dashboard-stats-grid mb-4">
+      <!-- Total Reservations -->
+      <stat-card title="Total Bookings"
+                 value="vm.metrics.totalReservations"
+                 icon="fa-book-bookmark"
+                 theme="forest"
+                 subtitle="All-time registered diners">
+      </stat-card>
+
+      <!-- Today's Reservations -->
+      <stat-card title="Today's Bookings"
+                 value="vm.metrics.todayTotal"
+                 icon="fa-calendar-day"
+                 theme="terracotta"
+                 subtitle="Confirmed: {{vm.metrics.todayConfirmed}} | Pending: {{vm.metrics.todayPending}}">
+      </stat-card>
+
+      <!-- Expected Guests Today -->
+      <stat-card title="Guests Expected Today"
+                 value="vm.metrics.todayGuestsExpected"
+                 icon="fa-users"
+                 theme="gold"
+                 subtitle="Dining covers scheduled">
+      </stat-card>
+
+      <!-- Available Tables -->
+      <stat-card title="Available Tables"
+                 value="vm.metrics.availableTables"
+                 icon="fa-circle-check"
+                 theme="emerald"
+                 subtitle="{{vm.metrics.availableTables}} of {{vm.metrics.totalTables}} tables ready">
+      </stat-card>
+
+      <!-- Reserved / Occupied Tables -->
+      <stat-card title="Active Tables"
+                 value="vm.metrics.reservedTables + vm.metrics.occupiedTables"
+                 icon="fa-utensils"
+                 theme="amber"
+                 subtitle="Reserved: {{vm.metrics.reservedTables}} | Seated: {{vm.metrics.occupiedTables}}">
+      </stat-card>
+
+      <!-- Table Utilization Rate % -->
+      <stat-card title="Table Utilization"
+                 value="vm.metrics.utilizationRate + '%'"
+                 icon="fa-chart-pie"
+                 theme="purple"
+                 subtitle="Based on {{vm.metrics.totalTables}} total tables">
+      </stat-card>
+    </div>
+
+    <!-- Operational Analytics & Timeline Grid -->
+    <div class="df-dashboard-main-grid">
+
+      <!-- Left Column: Today's Live Service Timeline -->
+      <div class="df-dashboard-timeline-col">
+        <div class="df-card df-timeline-card">
+          <div class="df-card-header df-card-header--between">
+            <div>
+              <h2 class="df-card-title">
+                <i class="fa-solid fa-clock text-terracotta"></i>
+                <span>Today's Dining Schedule</span>
+              </h2>
+              <p class="df-card-desc">Chronological flow of reservations for today's service</p>
+            </div>
+            <span class="df-today-badge">
+              <i class="fa-solid fa-circle-dot text-emerald fa-beat-fade"></i> Live Shift
+            </span>
+          </div>
+
+          <!-- Empty state if no bookings today -->
+          <div class="df-empty-state-sm text-center py-4" ng-if="vm.metrics.todayList.length === 0">
+            <i class="fa-solid fa-calendar-check text-muted fa-2x mb-2"></i>
+            <p>No reservations scheduled for today yet.</p>
+            <a href="#/book" class="df-btn df-btn-sm df-btn-terracotta">Book Table for Today</a>
+          </div>
+
+          <!-- Today's List of Reservations -->
+          <div class="df-timeline-list" ng-if="vm.metrics.todayList.length > 0">
+            <div class="df-timeline-item"
+                 ng-repeat="item in vm.metrics.todayList"
+                 ng-class="{'df-timeline-item--cancelled': item.status === 'Cancelled', 'df-timeline-item--completed': item.status === 'Completed'}">
+              
+              <div class="df-timeline-time">
+                <span class="df-time-display">{{item.time | time12}}</span>
+                <span class="df-time-guests">{{item.guests | seatsLabel}}</span>
+              </div>
+
+              <div class="df-timeline-dot" aria-hidden="true"></div>
+
+              <div class="df-timeline-content">
+                <div class="df-timeline-header">
+                  <div class="df-timeline-customer">
+                    <span class="df-timeline-name">{{item.customerName}}</span>
+                    <span class="df-timeline-phone"><i class="fa-solid fa-phone"></i> {{item.phone}}</span>
+                  </div>
+                  <status-badge status="item.status" size="sm"></status-badge>
+                </div>
+
+                <div class="df-timeline-details">
+                  <span class="df-timeline-table-tag">
+                    <i class="fa-solid fa-table-cells"></i> {{vm.getTableNumber(item.tableId)}}
+                  </span>
+                  <span class="df-timeline-occ" ng-if="item.occasion">
+                    <i class="fa-solid fa-champagne-glasses"></i> {{item.occasion}}
+                  </span>
+                  <span class="df-timeline-requests" ng-if="item.specialRequests">
+                    <i class="fa-solid fa-comment-dots"></i> {{item.specialRequests | truncateText:60}}
+                  </span>
+                </div>
+
+                <!-- Live Quick Action Triggers for Staff -->
+                <div class="df-timeline-actions" ng-if="item.status === 'Confirmed'">
+                  <button type="button" class="df-btn df-btn-xs df-btn-forest" ng-click="vm.seatGuest(item)">
+                    <i class="fa-solid fa-user-check"></i> Seat Party
+                  </button>
+                  <button type="button" class="df-btn df-btn-xs df-btn-outline" ng-click="vm.completeDining(item)">
+                    <i class="fa-solid fa-flag-checkered"></i> Finish Dining
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Zone Utilization & Quick Controls -->
+      <div class="df-dashboard-sidebar-col">
+
+        <!-- Table Utilization by Zone Card -->
+        <div class="df-card df-zone-util-card mb-4">
+          <div class="df-card-header">
+            <h3 class="df-card-title">
+              <i class="fa-solid fa-chart-column text-forest"></i>
+              <span>Zone Occupancy</span>
+            </h3>
+            <p class="df-card-desc">Active seating load across dining spaces</p>
+          </div>
+
+          <div class="df-zone-progress-list">
+            <div class="df-zone-progress-item" ng-repeat="z in vm.zoneMetrics">
+              <div class="df-zone-progress-top">
+                <span class="df-zone-p-name font-weight-bold">{{z.name}}</span>
+                <span class="df-zone-p-val">{{z.activeTables}} / {{z.totalTables}} active ({{z.utilizationPercent}}%)</span>
+              </div>
+              <div class="df-progress-bar-track">
+                <div class="df-progress-bar-fill"
+                     ng-style="{'width': z.utilizationPercent + '%'}"
+                     ng-class="{
+                       'bg-emerald': z.utilizationPercent < 50,
+                       'bg-amber': z.utilizationPercent >= 50 && z.utilizationPercent < 80,
+                       'bg-terracotta': z.utilizationPercent >= 80
+                     }">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Upcoming Schedule Preview Card -->
+        <div class="df-card df-upcoming-preview-card mb-4">
+          <div class="df-card-header df-card-header--between">
+            <h3 class="df-card-title">
+              <i class="fa-solid fa-calendar-week text-primary"></i>
+              <span>Upcoming Bookings</span>
+            </h3>
+            <a href="#/reservations" class="df-link-arrow">All <i class="fa-solid fa-chevron-right"></i></a>
+          </div>
+
+          <div class="df-upcoming-list">
+            <div class="df-upcoming-item" ng-repeat="up in vm.metrics.upcomingSchedule">
+              <div class="df-upcoming-date">
+                <span class="df-up-date">{{up.date | date:'MMM dd'}}</span>
+                <span class="df-up-time">{{up.time | time12}}</span>
+              </div>
+              <div class="df-upcoming-body">
+                <div class="df-up-name">{{up.customerName}}</div>
+                <div class="df-up-meta">
+                  <span>{{up.guests | seatsLabel}} &bull; {{vm.getTableNumber(up.tableId)}}</span>
+                </div>
+              </div>
+              <status-badge status="up.status" size="sm"></status-badge>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Staff Shortcuts -->
+        <div class="df-card df-shortcuts-card">
+          <h4 class="df-shortcuts-title"><i class="fa-solid fa-bolt"></i> Quick Operations</h4>
+          <div class="df-shortcuts-buttons">
+            <button type="button" class="df-shortcut-btn" ng-click="vm.goToNewBooking()">
+              <i class="fa-solid fa-calendar-plus"></i>
+              <span>New Reservation</span>
+            </button>
+            <button type="button" class="df-shortcut-btn" ng-click="vm.goToTableLayout()">
+              <i class="fa-solid fa-table-cells"></i>
+              <span>Floor Layout</span>
+            </button>
+            <button type="button" class="df-shortcut-btn" ng-click="vm.goToReservations()">
+              <i class="fa-solid fa-list-check"></i>
+              <span>All Bookings</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</div>

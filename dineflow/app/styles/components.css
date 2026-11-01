@@ -1,0 +1,869 @@
+/**
+ * DineFlow - Reusable Components & Directives Stylesheet
+ * Contains styles for status badges, stat cards, modal dialogs,
+ * booking receipts, table selectors, and reservations data tables.
+ */
+
+/* -------------------------------------------------------------------------- */
+/* 1. Status Badges                                                           */
+/* -------------------------------------------------------------------------- */
+.df-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-family: var(--df-font-body);
+  font-weight: 600;
+  border-radius: var(--df-radius-full);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.df-badge-sm {
+  font-size: 0.6875rem;
+  padding: 0.25rem 0.55rem;
+}
+
+.df-badge-md {
+  font-size: 0.78125rem;
+  padding: 0.35rem 0.75rem;
+}
+
+.df-badge-lg {
+  font-size: 0.875rem;
+  padding: 0.45rem 0.95rem;
+}
+
+.df-badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--df-radius-full);
+  background-color: currentColor;
+}
+
+/* Status Semantic Variations */
+.df-badge-confirmed,
+.df-badge-available {
+  background-color: var(--df-status-available-bg);
+  color: var(--df-status-available);
+  border: 1px solid var(--df-status-available-border);
+}
+
+.df-badge-pending,
+.df-badge-occupied {
+  background-color: var(--df-status-occupied-bg);
+  color: #D97706;
+  border: 1px solid var(--df-status-occupied-border);
+}
+[data-theme="dark"] .df-badge-pending,
+[data-theme="dark"] .df-badge-occupied {
+  color: #FBBF24;
+}
+
+.df-badge-reserved {
+  background-color: var(--df-status-reserved-bg);
+  color: var(--df-status-reserved);
+  border: 1px solid var(--df-status-reserved-border);
+}
+
+.df-badge-cleaning {
+  background-color: var(--df-status-cleaning-bg);
+  color: var(--df-status-cleaning);
+  border: 1px solid var(--df-status-cleaning-border);
+}
+
+.df-badge-cancelled {
+  background-color: var(--df-status-cancelled-bg);
+  color: var(--df-status-cancelled);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.df-badge-completed {
+  background-color: var(--df-status-completed-bg);
+  color: var(--df-status-completed);
+  border: 1px solid rgba(107, 114, 128, 0.3);
+}
+
+/* -------------------------------------------------------------------------- */
+/* 2. Stat Cards Directive                                                    */
+/* -------------------------------------------------------------------------- */
+.df-stat-card {
+  background: var(--df-bg-surface);
+  border: 1px solid var(--df-border-subtle);
+  border-radius: var(--df-radius-lg);
+  padding: 1.5rem;
+  box-shadow: var(--df-shadow-card);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform var(--df-transition-normal), box-shadow var(--df-transition-normal);
+}
+
+.df-stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--df-shadow-md);
+}
+
+.df-stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+}
+
+.df-stat-card--forest::before { background: var(--df-forest); }
+.df-stat-card--terracotta::before { background: var(--df-terracotta); }
+.df-stat-card--gold::before { background: var(--df-gold); }
+.df-stat-card--emerald::before { background: var(--df-status-available); }
+.df-stat-card--amber::before { background: var(--df-status-occupied); }
+.df-stat-card--purple::before { background: var(--df-status-cleaning); }
+
+.df-stat-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.df-stat-card__icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--df-radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+}
+
+.df-stat-card--forest .df-stat-card__icon-wrap {
+  background: var(--df-forest-light);
+  color: var(--df-forest);
+}
+.df-stat-card--terracotta .df-stat-card__icon-wrap {
+  background: var(--df-terracotta-light);
+  color: var(--df-terracotta);
+}
+.df-stat-card--gold .df-stat-card__icon-wrap {
+  background: var(--df-gold-light);
+  color: var(--df-gold);
+}
+.df-stat-card--emerald .df-stat-card__icon-wrap {
+  background: var(--df-status-available-bg);
+  color: var(--df-status-available);
+}
+.df-stat-card--amber .df-stat-card__icon-wrap {
+  background: var(--df-status-occupied-bg);
+  color: #D97706;
+}
+.df-stat-card--purple .df-stat-card__icon-wrap {
+  background: var(--df-status-cleaning-bg);
+  color: var(--df-status-cleaning);
+}
+
+[data-theme="dark"] .df-stat-card--forest .df-stat-card__icon-wrap { color: #34D399; }
+[data-theme="dark"] .df-stat-card--amber .df-stat-card__icon-wrap { color: #FBBF24; }
+
+.df-stat-card__trend {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--df-radius-sm);
+  background: var(--df-bg-subtle);
+  color: var(--df-text-secondary);
+}
+
+.df-stat-card__value {
+  font-family: var(--df-font-display);
+  font-size: 2.25rem;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--df-text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.df-stat-card__title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--df-text-secondary);
+}
+
+.df-stat-card__footer {
+  margin-top: 0.85rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--df-border-subtle);
+  font-size: 0.75rem;
+  color: var(--df-text-muted);
+}
+
+/* -------------------------------------------------------------------------- */
+/* 3. Modal Dialog Directive                                                  */
+/* -------------------------------------------------------------------------- */
+.df-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(16, 18, 20, 0.65);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 2500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  animation: dfFadeIn 200ms ease;
+}
+
+@keyframes dfFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.df-modal-container {
+  background: var(--df-bg-surface-elevated);
+  border: 1px solid var(--df-border-subtle);
+  border-radius: var(--df-radius-xl);
+  box-shadow: var(--df-shadow-lg);
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  animation: dfScaleUp 250ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes dfScaleUp {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.df-modal--sm { max-width: 440px; }
+.df-modal--md { max-width: 620px; }
+.df-modal--lg { max-width: 860px; }
+
+.df-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem 1.75rem;
+  border-bottom: 1px solid var(--df-border-subtle);
+}
+
+.df-modal-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.df-modal-close-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--df-radius-sm);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--df-text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  transition: all var(--df-transition-fast);
+}
+.df-modal-close-btn:hover {
+  background: var(--df-bg-subtle);
+  color: var(--df-text-primary);
+}
+
+.df-modal-body {
+  padding: 1.75rem;
+}
+
+/* -------------------------------------------------------------------------- */
+/* 4. Booking View Layout & Table Selectors                                    */
+/* -------------------------------------------------------------------------- */
+.df-booking-layout {
+  display: grid;
+  grid-template-columns: 1.35fr 0.85fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+.df-table-selector-info {
+  font-size: 0.875rem;
+  color: var(--df-text-secondary);
+  margin-bottom: 1rem;
+}
+
+.df-table-selector-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+.df-table-select-card {
+  background: var(--df-bg-surface);
+  border: 1px solid var(--df-border-subtle);
+  border-radius: var(--df-radius-md);
+  padding: 1rem;
+  cursor: pointer;
+  transition: all var(--df-transition-fast);
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+}
+
+.df-table-select-card:hover {
+  border-color: var(--df-terracotta);
+  transform: translateY(-2px);
+  box-shadow: var(--df-shadow-sm);
+}
+
+.df-table-select-card.selected {
+  border-color: var(--df-terracotta);
+  background-color: var(--df-terracotta-light);
+  box-shadow: 0 0 0 2px var(--df-terracotta);
+}
+
+.df-table-select-card__radio {
+  font-size: 1rem;
+  margin-top: 0.1rem;
+}
+
+.df-table-select-card__num {
+  font-family: var(--df-font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--df-text-primary);
+}
+
+.df-table-select-card__zone {
+  font-size: 0.75rem;
+  color: var(--df-text-secondary);
+  margin-bottom: 0.25rem;
+}
+
+.df-table-select-card__cap {
+  font-size: 0.71875rem;
+  color: var(--df-text-muted);
+}
+
+/* Booking Summary Sidebar */
+.df-summary-card {
+  position: sticky;
+  top: 90px;
+}
+
+.df-summary-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--df-border-subtle);
+}
+
+.df-summary-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.9375rem;
+}
+
+.df-summary-lbl {
+  color: var(--df-text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.df-summary-val {
+  font-weight: 600;
+}
+
+.df-summary-table-preview {
+  margin-top: 1.25rem;
+  padding: 1rem;
+  background: var(--df-bg-subtle);
+  border-radius: var(--df-radius-md);
+}
+
+.df-preview-badge {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--df-terracotta);
+  margin-bottom: 0.25rem;
+}
+
+.df-preview-desc {
+  font-size: 0.8125rem;
+  margin-bottom: 0;
+}
+
+.df-summary-guarantees {
+  margin-top: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.df-guarantee-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.8125rem;
+  color: var(--df-text-secondary);
+}
+
+.df-policy-card {
+  font-size: 0.8125rem;
+  color: var(--df-text-secondary);
+}
+
+.df-policy-title {
+  font-size: 0.9375rem;
+  margin-bottom: 0.65rem;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.df-policy-list {
+  padding-left: 1.25rem;
+  line-height: 1.6;
+}
+
+/* -------------------------------------------------------------------------- */
+/* 5. Booking Confirmation Receipt                                            */
+/* -------------------------------------------------------------------------- */
+.df-receipt-card {
+  background: var(--df-bg-surface);
+  border: 2px solid var(--df-status-available);
+  border-radius: var(--df-radius-xl);
+  max-width: 680px;
+  margin: 0 auto 3rem;
+  box-shadow: var(--df-shadow-lg);
+  overflow: hidden;
+  animation: dfSlideInUp 400ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.df-receipt-header {
+  background: linear-gradient(135deg, var(--df-forest), #122B24);
+  color: #FFFFFF;
+  padding: 2.5rem 2rem;
+  text-align: center;
+}
+
+.df-receipt-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: rgba(52, 211, 153, 0.2);
+  border: 1px solid rgba(52, 211, 153, 0.4);
+  color: #34D399;
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--df-radius-full);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.df-receipt-title {
+  color: #FFFFFF;
+  font-size: 1.85rem;
+  margin-bottom: 0.5rem;
+}
+
+.df-receipt-ref {
+  color: #D3DFDA;
+  font-size: 1.05rem;
+}
+
+.df-receipt-ref strong {
+  color: var(--df-gold);
+  font-family: monospace;
+  font-size: 1.2rem;
+  letter-spacing: 0.05em;
+}
+
+.df-receipt-body {
+  padding: 2rem;
+}
+
+.df-receipt-details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--df-border-subtle);
+}
+
+.df-receipt-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.df-receipt-label {
+  font-size: 0.75rem;
+  color: var(--df-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.25rem;
+}
+
+.df-receipt-val {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--df-text-primary);
+}
+
+.df-receipt-notes {
+  margin-top: 1.25rem;
+  padding: 1rem;
+  background: var(--df-bg-subtle);
+  border-radius: var(--df-radius-md);
+  font-size: 0.875rem;
+}
+
+.df-receipt-tip {
+  margin-top: 1.25rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  font-size: 0.8125rem;
+  color: var(--df-text-secondary);
+}
+
+.df-receipt-footer {
+  padding: 1.5rem 2rem;
+  background: var(--df-bg-subtle);
+  border-top: 1px solid var(--df-border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* -------------------------------------------------------------------------- */
+/* 6. Reservations Management Toolbar & Data Table                           */
+/* -------------------------------------------------------------------------- */
+.df-toolbar-card {
+  padding: 1.25rem 1.5rem;
+}
+
+.df-toolbar-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.df-search-input-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 280px;
+}
+
+.df-search-icon {
+  position: absolute;
+  left: 0.95rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--df-text-muted);
+  pointer-events: none;
+}
+
+.df-search-input {
+  padding-left: 2.5rem;
+  padding-right: 2.25rem;
+}
+
+.df-search-clear {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: var(--df-text-muted);
+  cursor: pointer;
+  padding: 0.25rem;
+}
+.df-search-clear:hover { color: var(--df-text-primary); }
+
+.df-toolbar-date-filter {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.df-toolbar-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--df-text-secondary);
+  white-space: nowrap;
+}
+
+.df-status-filter-tabs {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+}
+
+.df-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.5rem 0.95rem;
+  border-radius: var(--df-radius-full);
+  border: 1px solid var(--df-border-subtle);
+  background: var(--df-bg-surface);
+  color: var(--df-text-secondary);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--df-transition-fast);
+}
+
+.df-tab-btn:hover {
+  background: var(--df-bg-subtle);
+  color: var(--df-text-primary);
+}
+
+.df-tab-btn.active {
+  background: var(--df-forest);
+  border-color: var(--df-forest);
+  color: #FFFFFF;
+}
+
+.df-tab-count {
+  font-size: 0.6875rem;
+  padding: 0.1rem 0.45rem;
+  border-radius: var(--df-radius-full);
+  background: rgba(0, 0, 0, 0.1);
+  font-weight: 700;
+}
+
+.df-tab-btn.active .df-tab-count {
+  background: rgba(255, 255, 255, 0.25);
+  color: #FFFFFF;
+}
+
+/* Data Table */
+.df-table-responsive-card {
+  padding: 0;
+  overflow: hidden;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.df-table-header-info {
+  padding: 1rem 1.5rem;
+  font-size: 0.8125rem;
+  color: var(--df-text-muted);
+  border-bottom: 1px solid var(--df-border-subtle);
+}
+
+.df-table-responsive {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  box-sizing: border-box;
+}
+
+.df-data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  text-align: left;
+}
+
+.df-data-table th {
+  padding: 0.9rem 1.25rem;
+  background-color: var(--df-bg-subtle);
+  color: var(--df-text-secondary);
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--df-border-subtle);
+}
+
+.df-data-table td {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--df-border-subtle);
+  vertical-align: middle;
+}
+
+.df-table-row:hover {
+  background-color: rgba(200, 90, 50, 0.03);
+}
+
+.df-res-id {
+  cursor: pointer;
+  font-family: monospace;
+  font-size: 0.9375rem;
+}
+.df-res-id:hover { text-decoration: underline; }
+
+.df-diner-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.df-diner-name {
+  font-weight: 600;
+  color: var(--df-text-primary);
+  cursor: pointer;
+}
+.df-diner-name:hover { color: var(--df-terracotta); }
+
+.df-diner-contact {
+  font-size: 0.75rem;
+  color: var(--df-text-muted);
+}
+
+.df-datetime-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.df-date-badge { font-weight: 600; }
+.df-time-badge { font-size: 0.75rem; color: var(--df-text-secondary); }
+
+.df-guests-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.55rem;
+  background: var(--df-bg-subtle);
+  border-radius: var(--df-radius-sm);
+  font-weight: 600;
+  font-size: 0.8125rem;
+}
+
+.df-table-badge-info {
+  display: flex;
+  flex-direction: column;
+}
+.df-zone-sub {
+  font-size: 0.75rem;
+  color: var(--df-text-muted);
+}
+
+.df-occasion-tag {
+  font-size: 0.75rem;
+  padding: 0.2rem 0.5rem;
+  background: var(--df-bg-subtle);
+  border-radius: var(--df-radius-sm);
+  color: var(--df-text-secondary);
+}
+
+.df-action-btn-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+/* Empty State */
+.df-empty-state {
+  text-align: center;
+  padding: 4rem 1.5rem;
+  background: var(--df-bg-surface);
+  border: 1px dashed var(--df-border-subtle);
+  border-radius: var(--df-radius-lg);
+}
+
+.df-empty-state__icon {
+  font-size: 3.5rem;
+  color: var(--df-text-muted);
+  margin-bottom: 1.25rem;
+}
+
+.df-empty-state__title {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.df-empty-state__desc {
+  max-width: 500px;
+  margin: 0 auto 1.75rem;
+  color: var(--df-text-secondary);
+}
+
+.df-empty-state__actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* Detail Modal Grid */
+.df-detail-header-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--df-border-subtle);
+}
+
+.df-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.df-detail-card {
+  background: var(--df-bg-subtle);
+  border-radius: var(--df-radius-md);
+  padding: 0.85rem 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.df-detail-label {
+  font-size: 0.6875rem;
+  color: var(--df-text-muted);
+  text-transform: uppercase;
+  margin-bottom: 0.2rem;
+}
+
+.df-detail-val {
+  font-weight: 600;
+  font-size: 0.9375rem;
+}
+
+.df-detail-notes {
+  background: var(--df-bg-subtle);
+  padding: 1rem;
+  border-radius: var(--df-radius-md);
+  font-size: 0.875rem;
+}
+
+.df-detail-notes--cancelled {
+  border-left: 4px solid var(--df-status-cancelled);
+}
+
+@media (max-width: 900px) {
+  .df-booking-layout {
+    grid-template-columns: 1fr;
+  }
+  .df-summary-card {
+    position: static;
+  }
+}

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  
+  <title>DineFlow — Restaurant Reservation &amp; Table Management System</title>
+  <meta name="description" content="A modern, fully responsive Restaurant Reservation &amp; Table Management System built using AngularJS 1.x, CSS Grid/Flexbox, and LocalStorage for Full Stack Development academic submission.">
+  <meta name="author" content="DineFlow Systems">
+  <meta name="theme-color" content="#1A3B32">
+
+  <!-- Favicon SVG -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%231A3B32'/><path d='M30 25 v25 a10 10 0 0 0 20 0 v-25 M40 25 v50 M65 25 c0 20 -15 25 -15 40 h15 v10' stroke='%23FAF7F2' stroke-width='6' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>">
+
+  <!-- Google Fonts: Playfair Display & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,400;1,600&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome 6 Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer">
+
+  <!-- Application Stylesheets -->
+  <link rel="stylesheet" href="app/styles/theme.css">
+  <link rel="stylesheet" href="app/styles/main.css">
+  <link rel="stylesheet" href="app/styles/components.css">
+  <link rel="stylesheet" href="app/styles/tables.css">
+  <link rel="stylesheet" href="app/styles/dashboard.css">
+
+  <!-- AngularJS 1.8.2 Libraries (Local Vendor with CDN resilience) -->
+  <script src="assets/vendor/angular.min.js"></script>
+  <script src="assets/vendor/angular-route.min.js"></script>
+  <script src="assets/vendor/angular-animate.min.js"></script>
+
+  <!-- Application Data & Utilities -->
+  <script src="app/data/initial-data.js"></script>
+  <script src="app/utils/validators.js"></script>
+
+  <!-- Application Module & Routing -->
+  <script src="app/app.module.js"></script>
+  <script src="app/app.routes.js"></script>
+
+  <!-- Application Services -->
+  <script src="app/services/storage.service.js"></script>
+  <script src="app/services/notification.service.js"></script>
+  <script src="app/services/theme.service.js"></script>
+  <script src="app/services/table.service.js"></script>
+  <script src="app/services/reservation.service.js"></script>
+
+  <!-- Application Directives -->
+  <script src="app/directives/status-badge.directive.js"></script>
+  <script src="app/directives/stat-card.directive.js"></script>
+  <script src="app/directives/table-card.directive.js"></script>
+  <script src="app/directives/modal-dialog.directive.js"></script>
+
+  <!-- Application Components -->
+  <script src="app/components/navbar.component.js"></script>
+  <script src="app/components/footer.component.js"></script>
+
+  <!-- Application Controllers -->
+  <script src="app/controllers/home.controller.js"></script>
+  <script src="app/controllers/booking.controller.js"></script>
+  <script src="app/controllers/reservations.controller.js"></script>
+  <script src="app/controllers/tables.controller.js"></script>
+  <script src="app/controllers/dashboard.controller.js"></script>
+</head>
+<body ng-app="dineflowApp">
+
+  <!-- Application Navbar Component -->
+  <dineflow-navbar></dineflow-navbar>
+
+  <!-- Routed View Container (ng-view) -->
+  <main class="df-main-content" role="main" id="main-content">
+    <div ng-view class="df-view-fade"></div>
+  </main>
+
+  <!-- Application Footer Component -->
+  <dineflow-footer></dineflow-footer>
+
+  <!-- Application Toast Notifications Overlay -->
+  <aside class="df-toast-container" aria-live="polite" aria-atomic="true">
+    <div class="df-toast df-toast-{{n.type}}" ng-repeat="n in notifications track by n.id">
+      <div class="df-toast-icon">
+        <i class="fa-solid fa-circle-check" ng-if="n.type === 'success'"></i>
+        <i class="fa-solid fa-circle-exclamation" ng-if="n.type === 'error'"></i>
+        <i class="fa-solid fa-triangle-exclamation" ng-if="n.type === 'warning'"></i>
+        <i class="fa-solid fa-circle-info" ng-if="n.type === 'info'"></i>
+      </div>
+      <div class="df-toast-content">
+        <div class="df-toast-title">{{n.title}}</div>
+        <p class="df-toast-message">{{n.message}}</p>
+      </div>
+      <button type="button" class="df-toast-close" ng-click="$root.notifications.splice($index, 1)" aria-label="Dismiss alert">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+  </aside>
+
+</body>
+</html>

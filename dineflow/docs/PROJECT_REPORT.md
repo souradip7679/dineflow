@@ -154,8 +154,7 @@ dineflow/
 │   ├── images/                      # Culinary imagery & assets
 │   └── icons/                       # SVG brand emblems
 └── docs/
-    ├── PROJECT_REPORT.md            # Comprehensive project report
-    └── VIVA_QUESTIONS.md            # Viva voce questions with model answers
+    └── PROJECT_REPORT.md            # Comprehensive project report
 ```
 
 ---

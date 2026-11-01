@@ -116,8 +116,7 @@ dineflow/
 ├── assets/
 │   └── vendor/                      # Bundled AngularJS 1.8.2 scripts
 └── docs/
-    ├── PROJECT_REPORT.md            # Comprehensive Academic Project Report
-    └── VIVA_QUESTIONS.md            # Viva Voce Questions & Answers
+    └── PROJECT_REPORT.md            # Comprehensive Academic Project Report
 ```
 
 

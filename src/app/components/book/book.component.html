@@ -1,0 +1,402 @@
+<div class="df-booking-view">
+  <div class="df-container">
+
+    <!-- Page Header -->
+    <div class="df-page-header text-center">
+      <span class="df-section-eyebrow">Table Reservation</span>
+      <h1 class="df-page-title">Reserve Your Table</h1>
+      <p class="df-page-subtitle">
+        Book your preferred dining table in real-time. Capacity checks and anti-conflict scheduling guaranteed.
+      </p>
+    </div>
+
+    <!-- Booking Confirmation Receipt -->
+    <div class="df-receipt-card" *ngIf="bookingSuccess && confirmedReservation">
+      <div class="df-receipt-header">
+        <div class="df-receipt-badge">
+          <i class="fa-solid fa-circle-check"></i>
+          <span>Reservation Confirmed</span>
+        </div>
+        <h2 class="df-receipt-title">Thank You, {{ confirmedReservation.customerName }}!</h2>
+        <p class="df-receipt-ref">
+          Booking Reference: <strong>{{ confirmedReservation.id }}</strong>
+        </p>
+      </div>
+
+      <div class="df-receipt-body">
+        <div class="df-receipt-details-grid">
+          <div class="df-receipt-item">
+            <span class="df-receipt-label"><i class="fa-solid fa-calendar-day"></i> Date</span>
+            <span class="df-receipt-val">{{ confirmedReservation.date | friendlyDate }}</span>
+          </div>
+          <div class="df-receipt-item">
+            <span class="df-receipt-label"><i class="fa-solid fa-clock"></i> Time</span>
+            <span class="df-receipt-val">{{ confirmedReservation.time | time12 }}</span>
+          </div>
+          <div class="df-receipt-item">
+            <span class="df-receipt-label"><i class="fa-solid fa-users"></i> Party Size</span>
+            <span class="df-receipt-val">{{ confirmedReservation.guests | seatsLabel }}</span>
+          </div>
+          <div class="df-receipt-item" *ngIf="confirmedTable">
+            <span class="df-receipt-label"><i class="fa-solid fa-table-cells"></i> Assigned Table</span>
+            <span class="df-receipt-val">{{ confirmedTable.number }} ({{ confirmedTable.zone }})</span>
+          </div>
+          <div class="df-receipt-item">
+            <span class="df-receipt-label"><i class="fa-solid fa-glass-cheers"></i> Occasion</span>
+            <span class="df-receipt-val">{{ confirmedReservation.occasion || 'Dining' }}</span>
+          </div>
+          <div class="df-receipt-item">
+            <span class="df-receipt-label"><i class="fa-solid fa-phone"></i> Contact Phone</span>
+            <span class="df-receipt-val">{{ confirmedReservation.phone }}</span>
+          </div>
+        </div>
+
+        <div class="df-receipt-notes" *ngIf="confirmedReservation.specialRequests">
+          <strong>Special Requests / Dietary Notes:</strong>
+          <p>{{ confirmedReservation.specialRequests }}</p>
+        </div>
+
+        <div class="df-receipt-tip">
+          <i class="fa-solid fa-circle-info"></i>
+          <span>A confirmation copy has been persisted locally in your browser storage. Your table will be held for up to 15 minutes past reservation time.</span>
+        </div>
+      </div>
+
+      <div class="df-receipt-footer">
+        <button type="button" class="df-btn df-btn-forest" (click)="viewInReservations()">
+          <i class="fa-solid fa-list-check"></i>
+          <span>View In Reservations</span>
+        </button>
+        <button type="button" class="df-btn df-btn-outline" (click)="bookAnother()">
+          <i class="fa-solid fa-plus"></i>
+          <span>Make Another Booking</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Booking Form Container -->
+    <div class="df-booking-layout" *ngIf="!bookingSuccess">
+
+      <!-- Left Column: Primary Booking Form -->
+      <div class="df-booking-form-col">
+        <div class="df-card df-booking-form-card">
+          <div class="df-card-header">
+            <h2 class="df-card-title">
+              <i class="fa-solid fa-calendar-check text-terracotta"></i>
+              <span>Reservation Details</span>
+            </h2>
+            <p class="df-card-desc">All fields marked with an asterisk (*) are required.</p>
+          </div>
+
+          <!-- Error Alert Banner -->
+          <div class="df-alert df-alert--error mb-4" *ngIf="errorMessage">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <span>{{ errorMessage }}</span>
+          </div>
+
+          <form #bookingForm="ngForm" class="df-form" (ngSubmit)="submitBooking(bookingForm)" novalidate>
+            
+            <!-- Step 1: Schedule & Guests -->
+            <div class="df-form-section">
+              <h3 class="df-form-section-title">
+                <span class="df-step-num">1</span>
+                <span>When &amp; Party Size</span>
+              </h3>
+              
+              <div class="df-form-grid-3">
+                <!-- Date -->
+                <div class="df-form-group">
+                  <label class="df-label" for="bookDate">
+                    Reservation Date <span class="text-terracotta">*</span>
+                  </label>
+                  <input type="date"
+                         id="bookDate"
+                         name="date"
+                         class="df-input"
+                         [min]="minDate"
+                         [(ngModel)]="formData.date"
+                         required>
+                  <span class="df-form-hint">Today or future date</span>
+                </div>
+
+                <!-- Time -->
+                <div class="df-form-group">
+                  <label class="df-label" for="bookTime">
+                    Reservation Time <span class="text-terracotta">*</span>
+                  </label>
+                  <select id="bookTime"
+                          name="time"
+                          class="df-select"
+                          [(ngModel)]="formData.time"
+                          required>
+                    <optgroup label="Lunch Service">
+                      <option value="11:30">11:30 AM</option>
+                      <option value="12:00">12:00 PM</option>
+                      <option value="12:30">12:30 PM</option>
+                      <option value="13:00">1:00 PM</option>
+                      <option value="13:30">1:30 PM</option>
+                      <option value="14:00">2:00 PM</option>
+                    </optgroup>
+                    <optgroup label="Dinner Service">
+                      <option value="17:30">5:30 PM</option>
+                      <option value="18:00">6:00 PM</option>
+                      <option value="18:30">6:30 PM</option>
+                      <option value="19:00">7:00 PM</option>
+                      <option value="19:30">7:30 PM</option>
+                      <option value="20:00">8:00 PM</option>
+                      <option value="20:30">8:30 PM</option>
+                      <option value="21:00">9:00 PM</option>
+                      <option value="21:30">9:30 PM</option>
+                      <option value="22:00">10:00 PM</option>
+                    </optgroup>
+                  </select>
+                  <span class="df-form-hint">Hours: 11:30 AM &ndash; 11:00 PM</span>
+                </div>
+
+                <!-- Number of Guests -->
+                <div class="df-form-group">
+                  <label class="df-label" for="bookGuests">
+                    Number of Guests <span class="text-terracotta">*</span>
+                  </label>
+                  <select id="bookGuests"
+                          name="guests"
+                          class="df-select"
+                          [(ngModel)]="formData.guests"
+                          (change)="onGuestsChange()"
+                          required>
+                    <option [ngValue]="1">1 Person</option>
+                    <option [ngValue]="2">2 Guests (Couple)</option>
+                    <option [ngValue]="3">3 Guests</option>
+                    <option [ngValue]="4">4 Guests</option>
+                    <option [ngValue]="5">5 Guests</option>
+                    <option [ngValue]="6">6 Guests</option>
+                    <option [ngValue]="7">7 Guests</option>
+                    <option [ngValue]="8">8 Guests (Large Group)</option>
+                    <option [ngValue]="10">10 Guests (Chef's Table)</option>
+                  </select>
+                  <span class="df-form-hint">Party size determines table suitability</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 2: Table Selection -->
+            <div class="df-form-section">
+              <div class="df-form-section-header">
+                <h3 class="df-form-section-title">
+                  <span class="df-step-num">2</span>
+                  <span>Select Table</span>
+                </h3>
+                <a routerLink="/tables" target="_blank" class="df-link-subtle">
+                  <i class="fa-solid fa-map"></i> View Floor Plan
+                </a>
+              </div>
+
+              <div class="df-form-group">
+                <label class="df-label" for="bookTable">
+                  Assigned Dining Table <span class="text-terracotta">*</span>
+                </label>
+                <select id="bookTable"
+                        name="tableId"
+                        class="df-select"
+                        [(ngModel)]="formData.tableId"
+                        required>
+                  <option [ngValue]="null" disabled>-- Choose a Table --</option>
+                  <option *ngFor="let t of availableTablesForGuests" [ngValue]="t.id">
+                    {{ t.number }} &ndash; {{ t.zone }} (Seats up to {{ t.capacity }} &bull; {{ t.status }})
+                  </option>
+                </select>
+                <span class="df-form-hint" *ngIf="availableTablesForGuests.length === 0">
+                  No tables accommodate {{ formData.guests }} guests. Please reduce party size or contact concierge.
+                </span>
+              </div>
+
+              <!-- Selected Table Highlight -->
+              <div class="df-table-selected-preview" *ngIf="selectedTable">
+                <div class="df-table-preview-icon">
+                  <i class="fa-solid fa-chair text-forest-light"></i>
+                </div>
+                <div class="df-table-preview-info">
+                  <strong>{{ selectedTable.number }} &bull; {{ selectedTable.zone }}</strong>
+                  <p>{{ selectedTable.description }}</p>
+                </div>
+                <div class="df-table-preview-cap">
+                  <span>Capacity: {{ selectedTable.capacity }} guests</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 3: Guest Contact Information -->
+            <div class="df-form-section">
+              <h3 class="df-form-section-title">
+                <span class="df-step-num">3</span>
+                <span>Contact Details</span>
+              </h3>
+
+              <div class="df-form-grid-2">
+                <!-- Full Name -->
+                <div class="df-form-group">
+                  <label class="df-label" for="custName">
+                    Full Name <span class="text-terracotta">*</span>
+                  </label>
+                  <input type="text"
+                         id="custName"
+                         name="customerName"
+                         class="df-input"
+                         placeholder="e.g. Charlotte Brontë"
+                         [(ngModel)]="formData.customerName"
+                         required>
+                </div>
+
+                <!-- Email Address -->
+                <div class="df-form-group">
+                  <label class="df-label" for="custEmail">
+                    Email Address <span class="text-terracotta">*</span>
+                  </label>
+                  <input type="email"
+                         id="custEmail"
+                         name="email"
+                         class="df-input"
+                         placeholder="name@example.com"
+                         [(ngModel)]="formData.email"
+                         required>
+                </div>
+
+                <!-- Phone Number -->
+                <div class="df-form-group">
+                  <label class="df-label" for="custPhone">
+                    Phone Number <span class="text-terracotta">*</span>
+                  </label>
+                  <input type="tel"
+                         id="custPhone"
+                         name="phone"
+                         class="df-input"
+                         placeholder="+1 (555) 000-0000"
+                         [(ngModel)]="formData.phone"
+                         required>
+                </div>
+
+                <!-- Occasion -->
+                <div class="df-form-group">
+                  <label class="df-label" for="custOccasion">Occasion / Event</label>
+                  <select id="custOccasion"
+                          name="occasion"
+                          class="df-select"
+                          [(ngModel)]="formData.occasion">
+                    <option value="Casual Dining">Casual Dining</option>
+                    <option value="Anniversary">Anniversary Celebration</option>
+                    <option value="Birthday">Birthday Gathering</option>
+                    <option value="Business Dinner">Business Dinner</option>
+                    <option value="Romantic Date">Romantic Date</option>
+                    <option value="Family Gathering">Family Gathering</option>
+                    <option value="Reunion">Reunion</option>
+                    <option value="Corporate Celebration">Corporate Celebration</option>
+                    <option value="Other">Other Special Occasion</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Special Requests -->
+              <div class="df-form-group mt-3">
+                <label class="df-label" for="specialReq">
+                  Special Requests, Allergies, or Dietary Preferences
+                </label>
+                <textarea id="specialReq"
+                          name="specialRequests"
+                          class="df-textarea"
+                          rows="3"
+                          placeholder="e.g. High chair needed, gluten sensitivity, anniversary dessert greeting, quiet corner..."
+                          [(ngModel)]="formData.specialRequests">
+                </textarea>
+              </div>
+            </div>
+
+            <!-- Terms & Consent -->
+            <div class="df-form-checkbox-wrap">
+              <label class="df-checkbox-label">
+                <input type="checkbox"
+                       name="agreeTerms"
+                       [(ngModel)]="formData.agreeTerms"
+                       required>
+                <span>I confirm that the reservation details are correct and acknowledge that tables are held for 15 minutes past scheduled time.</span>
+              </label>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="df-form-actions">
+              <button type="submit"
+                      class="df-btn df-btn-lg df-btn-terracotta df-btn-submit"
+                      [disabled]="bookingForm.invalid || !formData.agreeTerms">
+                <i class="fa-solid fa-champagne-glasses"></i>
+                <span>Confirm Reservation</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Right Column: Booking Summary & Policies -->
+      <div class="df-booking-sidebar-col">
+        
+        <!-- Live Reservation Summary Card -->
+        <div class="df-card df-summary-card mb-4">
+          <div class="df-card-header">
+            <h3 class="df-card-title">
+              <i class="fa-solid fa-receipt text-forest-light"></i>
+              <span>Booking Summary</span>
+            </h3>
+          </div>
+          <div class="df-summary-body">
+            <div class="df-summary-row">
+              <span class="df-summary-label"><i class="fa-solid fa-calendar-day"></i> Date:</span>
+              <span class="df-summary-val">{{ formData.date | friendlyDate }}</span>
+            </div>
+            <div class="df-summary-row">
+              <span class="df-summary-label"><i class="fa-solid fa-clock"></i> Time:</span>
+              <span class="df-summary-val">{{ formData.time | time12 }}</span>
+            </div>
+            <div class="df-summary-row">
+              <span class="df-summary-label"><i class="fa-solid fa-users"></i> Guests:</span>
+              <span class="df-summary-val">{{ formData.guests | seatsLabel }}</span>
+            </div>
+            <div class="df-summary-row">
+              <span class="df-summary-label"><i class="fa-solid fa-table-cells"></i> Table:</span>
+              <span class="df-summary-val" *ngIf="selectedTable">
+                {{ selectedTable.number }} ({{ selectedTable.zone }})
+              </span>
+              <span class="df-summary-val text-muted" *ngIf="!selectedTable">
+                None selected
+              </span>
+            </div>
+            <div class="df-summary-row" *ngIf="formData.occasion">
+              <span class="df-summary-label"><i class="fa-solid fa-glass-cheers"></i> Occasion:</span>
+              <span class="df-summary-val">{{ formData.occasion }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Anti-Conflict Guarantee Card -->
+        <div class="df-card df-guarantee-card mb-4">
+          <div class="df-guarantee-icon">
+            <i class="fa-solid fa-shield-halved"></i>
+          </div>
+          <h4>Anti-Conflict Scheduling</h4>
+          <p>
+            DineFlow enforces a mandatory <strong>90-minute dining buffer</strong> for every booking. Your reserved table will never be double-booked or handed off prematurely.
+          </p>
+        </div>
+
+        <!-- Dining Policies -->
+        <div class="df-card df-policies-card">
+          <h4 class="df-card-subtitle"><i class="fa-solid fa-circle-info"></i> Dining Guidelines</h4>
+          <ul class="df-policies-list">
+            <li><strong>Grace Period:</strong> Tables are held for 15 minutes before release.</li>
+            <li><strong>Dress Code:</strong> Smart casual attire is appreciated.</li>
+            <li><strong>Cancellation:</strong> Please cancel at least 2 hours in advance via our Reservations portal.</li>
+            <li><strong>Corkage Fee:</strong> $35 per 750ml bottle for rare personal vintages.</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

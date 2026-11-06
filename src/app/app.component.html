@@ -1,0 +1,33 @@
+<div class="df-app-root">
+  <!-- Top Navigation Header -->
+  <app-navbar></app-navbar>
+
+  <!-- Routed View Outlet -->
+  <main class="df-main-content">
+    <router-outlet></router-outlet>
+  </main>
+
+  <!-- Global Footer -->
+  <app-footer></app-footer>
+
+  <!-- Toast Notification Stack -->
+  <aside class="df-toast-container" aria-live="polite" aria-atomic="true">
+    <div class="df-toast"
+         *ngFor="let toast of notifications$ | async"
+         [ngClass]="'df-toast--' + toast.type"
+         role="alert">
+      <div class="df-toast__icon">
+        <i class="fa-solid" [ngClass]="toast.icon"></i>
+      </div>
+      <div class="df-toast__body">
+        <p class="df-toast__msg">{{ toast.message }}</p>
+      </div>
+      <button type="button"
+              class="df-toast__close"
+              aria-label="Dismiss notification"
+              (click)="dismissToast(toast.id)">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+  </aside>
+</div>

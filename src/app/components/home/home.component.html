@@ -1,0 +1,197 @@
+<div class="df-home-view">
+
+  <!-- Hero Section -->
+  <section class="df-hero-section">
+    <div class="df-hero-backdrop" aria-hidden="true"></div>
+    <div class="df-hero-container">
+      <div class="df-hero-content">
+        <span class="df-hero-eyebrow">
+          <i class="fa-solid fa-sparkles"></i> Welcome to DineFlow Bistro &amp; Lounge
+        </span>
+        <h1 class="df-hero-title">{{ headline }}</h1>
+        <p class="df-hero-tagline">{{ tagline }}</p>
+
+        <div class="df-hero-actions">
+          <a routerLink="/book" class="df-btn df-btn-lg df-btn-terracotta">
+            <i class="fa-solid fa-champagne-glasses"></i>
+            <span>Reserve a Table</span>
+          </a>
+          <a routerLink="/tables" class="df-btn df-btn-lg df-btn-outline-light">
+            <i class="fa-solid fa-table-cells"></i>
+            <span>View Floor Plan</span>
+          </a>
+        </div>
+
+        <!-- Quick Highlight Badges -->
+        <div class="df-hero-stats">
+          <div class="df-hero-stat" *ngFor="let item of highlights">
+            <div class="df-hero-stat__icon"><i class="fa-solid" [ngClass]="item.icon"></i></div>
+            <div class="df-hero-stat__num">{{ item.number }}</div>
+            <div class="df-hero-stat__lbl">{{ item.label }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Reservation Bar Widget -->
+      <div class="df-hero-widget-wrap">
+        <div class="df-quick-book-card">
+          <div class="df-quick-book-card__header">
+            <h3><i class="fa-solid fa-clock"></i> Quick Reservation</h3>
+            <span class="df-quick-book-card__badge">Instant Confirmation</span>
+          </div>
+          <form class="df-quick-book-form" (ngSubmit)="jumpToBooking()">
+            <div class="df-form-group">
+              <label><i class="fa-solid fa-calendar-day"></i> Date</label>
+              <input type="date" class="df-input" [(ngModel)]="quickDate" name="quickDate" required>
+            </div>
+            <div class="df-form-group">
+              <label><i class="fa-solid fa-clock"></i> Time</label>
+              <select class="df-select" [(ngModel)]="quickTime" name="quickTime">
+                <option value="12:00">12:00 PM (Lunch)</option>
+                <option value="13:30">1:30 PM (Lunch)</option>
+                <option value="18:30">6:30 PM (Dinner)</option>
+                <option value="19:30">7:30 PM (Dinner)</option>
+                <option value="20:30">8:30 PM (Dinner)</option>
+                <option value="21:30">9:30 PM (Late Dinner)</option>
+              </select>
+            </div>
+            <div class="df-form-group">
+              <label><i class="fa-solid fa-users"></i> Guests</label>
+              <select class="df-select" [(ngModel)]="quickGuests" name="quickGuests">
+                <option [ngValue]="1">1 Person</option>
+                <option [ngValue]="2">2 Guests (Couple)</option>
+                <option [ngValue]="4">4 Guests (Standard)</option>
+                <option [ngValue]="6">6 Guests (Party)</option>
+                <option [ngValue]="8">8+ Guests (VIP)</option>
+              </select>
+            </div>
+            <button type="submit" class="df-btn df-btn-terracotta df-btn-block">
+              <span>Find Table</span>
+              <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Culinary Specialties Section -->
+  <section class="df-section df-section--dishes">
+    <div class="df-container">
+      <div class="df-section-header text-center">
+        <span class="df-section-eyebrow">Gastronomy &amp; Artistry</span>
+        <h2 class="df-section-title">Featured Culinary Creations</h2>
+        <p class="df-section-subtitle">
+          Crafted with locally foraged ingredients, prime dry-aged cuts, and sustainable seafood.
+        </p>
+      </div>
+
+      <div class="df-dishes-grid">
+        <article class="df-dish-card" *ngFor="let dish of dishes">
+          <div class="df-dish-card__media">
+            <div class="df-dish-card__placeholder" aria-hidden="true">
+              <i class="fa-solid fa-utensils"></i>
+            </div>
+            <span class="df-dish-badge" *ngIf="dish.badge">{{ dish.badge }}</span>
+            <span class="df-dish-price">{{ dish.price }}</span>
+          </div>
+          <div class="df-dish-card__body">
+            <div class="df-dish-card__category">{{ dish.category }} &bull; {{ dish.calories }}</div>
+            <h3 class="df-dish-card__title">{{ dish.name }}</h3>
+            <p class="df-dish-card__desc">{{ dish.description }}</p>
+            <div class="df-dish-card__tags">
+              <span class="df-tag" *ngFor="let tag of dish.tags">{{ tag }}</span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dining Zones Section -->
+  <section class="df-section df-section--zones">
+    <div class="df-container">
+      <div class="df-section-header text-center">
+        <span class="df-section-eyebrow">Atmosphere &amp; Design</span>
+        <h2 class="df-section-title">Four Distinct Dining Ambiances</h2>
+        <p class="df-section-subtitle">
+          From candlelit fireplaces to breezy outdoor gardens, find the ideal setting for your occasion.
+        </p>
+      </div>
+
+      <div class="df-zones-grid">
+        <div class="df-zone-card" *ngFor="let zone of zones">
+          <div class="df-zone-card__icon">
+            <i class="fa-solid" [ngClass]="zone.icon"></i>
+          </div>
+          <div class="df-zone-card__body">
+            <span class="df-zone-card__badge">{{ zone.capacity }}</span>
+            <h3 class="df-zone-card__title">{{ zone.title }}</h3>
+            <h4 class="df-zone-card__subtitle">{{ zone.subtitle }}</h4>
+            <p class="df-zone-card__desc">{{ zone.description }}</p>
+            <ul class="df-zone-card__features">
+              <li *ngFor="let feat of zone.features">
+                <i class="fa-solid fa-check text-forest-light"></i>
+                <span>{{ feat }}</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center mt-5">
+        <a routerLink="/tables" class="df-btn df-btn-lg df-btn-forest">
+          <i class="fa-solid fa-map-location-dot"></i>
+          <span>Explore Interactive Floor Plan</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Story & Location Banner -->
+  <section class="df-section df-section--story">
+    <div class="df-container">
+      <div class="df-story-card">
+        <div class="df-story-grid">
+          <div class="df-story-content">
+            <span class="df-section-eyebrow text-terracotta">Culinary Hospitality</span>
+            <h2 class="df-story-title">Crafted for Memorable Moments</h2>
+            <p class="df-story-p">
+              DineFlow was conceived as a tribute to timeless dining hospitality. Every booth, terrace nook, and chef tasting counter is orchestrated to foster meaningful conversations and unforgettable flavors.
+            </p>
+            <div class="df-story-highlights">
+              <div class="df-story-highlight">
+                <i class="fa-solid fa-clock text-terracotta"></i>
+                <div>
+                  <strong>Hours of Service</strong>
+                  <span>Lunch: 11:30 AM &ndash; 3:00 PM<br>Dinner: 5:30 PM &ndash; 11:30 PM</span>
+                </div>
+              </div>
+              <div class="df-story-highlight">
+                <i class="fa-solid fa-location-dot text-forest-light"></i>
+                <div>
+                  <strong>Prime Location</strong>
+                  <span>482 Gourmet Boulevard, Manhattan, NY 10012</span>
+                </div>
+              </div>
+            </div>
+            <div class="mt-4">
+              <a routerLink="/book" class="df-btn df-btn-terracotta">
+                <i class="fa-solid fa-champagne-glasses"></i>
+                <span>Book Your Experience</span>
+              </a>
+            </div>
+          </div>
+          <div class="df-story-illustration">
+            <div class="df-story-badge-quote">
+              <i class="fa-solid fa-quote-left"></i>
+              <p>&ldquo;An intoxicating marriage of warmth, culinary excellence, and impeccable hospitality.&rdquo;</p>
+              <span>&mdash; Epicurean Guide, 2026</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>

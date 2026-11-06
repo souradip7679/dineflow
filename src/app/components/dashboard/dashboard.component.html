@@ -1,0 +1,229 @@
+<div class="df-dashboard-view">
+  <div class="df-container">
+
+    <!-- Page Header & Quick Actions -->
+    <div class="df-page-header df-page-header--actions">
+      <div>
+        <span class="df-section-eyebrow">Executive Management &amp; Analytics</span>
+        <h1 class="df-page-title">Operations Dashboard</h1>
+        <p class="df-page-subtitle">
+          Real-time metrics calculated dynamically from active reservation registers and table states.
+        </p>
+      </div>
+      <div class="df-header-actions">
+        <button type="button" class="df-btn df-btn-outline" (click)="loadDashboard()" title="Recalculate metrics">
+          <i class="fa-solid fa-arrows-rotate"></i>
+          <span>Refresh</span>
+        </button>
+        <a routerLink="/tables" class="df-btn df-btn-forest">
+          <i class="fa-solid fa-table-cells"></i>
+          <span>Floor Plan</span>
+        </a>
+        <a routerLink="/book" class="df-btn df-btn-terracotta">
+          <i class="fa-solid fa-plus"></i>
+          <span>New Reservation</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- KPI Metric Cards Grid -->
+    <div class="df-dashboard-stats-grid mb-4">
+      <!-- Total Reservations -->
+      <app-stat-card title="Total Bookings"
+                     [value]="metrics.totalReservations"
+                     icon="fa-book-bookmark"
+                     theme="forest"
+                     subtitle="All-time registered diners">
+      </app-stat-card>
+
+      <!-- Today's Reservations -->
+      <app-stat-card title="Today's Bookings"
+                     [value]="metrics.todayTotal"
+                     icon="fa-calendar-day"
+                     theme="terracotta"
+                     [subtitle]="'Confirmed: ' + metrics.todayConfirmed + ' | Pending: ' + metrics.todayPending">
+      </app-stat-card>
+
+      <!-- Expected Guests Today -->
+      <app-stat-card title="Guests Expected Today"
+                     [value]="metrics.todayGuestsExpected"
+                     icon="fa-users"
+                     theme="gold"
+                     subtitle="Dining covers scheduled">
+      </app-stat-card>
+
+      <!-- Available Tables -->
+      <app-stat-card title="Available Tables"
+                     [value]="metrics.availableTables"
+                     icon="fa-circle-check"
+                     theme="emerald"
+                     [subtitle]="metrics.availableTables + ' of ' + metrics.totalTables + ' tables ready'">
+      </app-stat-card>
+
+      <!-- Reserved / Occupied Tables -->
+      <app-stat-card title="Active Tables"
+                     [value]="metrics.reservedTables + metrics.occupiedTables"
+                     icon="fa-utensils"
+                     theme="amber"
+                     [subtitle]="'Reserved: ' + metrics.reservedTables + ' | Seated: ' + metrics.occupiedTables">
+      </app-stat-card>
+
+      <!-- Table Utilization Rate % -->
+      <app-stat-card title="Table Utilization"
+                     [value]="metrics.utilizationRate + '%'"
+                     icon="fa-chart-pie"
+                     theme="purple"
+                     [subtitle]="'Based on ' + metrics.totalTables + ' total tables'">
+      </app-stat-card>
+    </div>
+
+    <!-- Detailed Analytics & Today's Schedule Grid -->
+    <div class="df-dashboard-main-grid">
+
+      <!-- Left Column: Floor Utilization & Zone Breakdown -->
+      <div class="df-dashboard-col">
+        
+        <!-- Table Status Breakdown Card -->
+        <div class="df-card mb-4">
+          <div class="df-card-header">
+            <h3 class="df-card-title">
+              <i class="fa-solid fa-chart-column text-forest-light"></i>
+              <span>Live Table Status Distribution</span>
+            </h3>
+            <span class="df-card-meta">{{ metrics.totalTables }} Total Tables</span>
+          </div>
+
+          <div class="df-status-bars">
+            <!-- Available -->
+            <div class="df-status-bar-row">
+              <div class="df-status-bar-lbl">
+                <span class="df-badge-dot bg-available"></span>
+                <span>Available</span>
+                <strong>{{ metrics.availableTables }}</strong>
+              </div>
+              <div class="df-bar-track">
+                <div class="df-bar-fill df-bar-available" [style.width.%]="availablePct"></div>
+              </div>
+              <span class="df-bar-pct">{{ availablePct }}%</span>
+            </div>
+
+            <!-- Reserved -->
+            <div class="df-status-bar-row">
+              <div class="df-status-bar-lbl">
+                <span class="df-badge-dot bg-reserved"></span>
+                <span>Reserved</span>
+                <strong>{{ metrics.reservedTables }}</strong>
+              </div>
+              <div class="df-bar-track">
+                <div class="df-bar-fill df-bar-reserved" [style.width.%]="reservedPct"></div>
+              </div>
+              <span class="df-bar-pct">{{ reservedPct }}%</span>
+            </div>
+
+            <!-- Occupied -->
+            <div class="df-status-bar-row">
+              <div class="df-status-bar-lbl">
+                <span class="df-badge-dot bg-occupied"></span>
+                <span>Occupied</span>
+                <strong>{{ metrics.occupiedTables }}</strong>
+              </div>
+              <div class="df-bar-track">
+                <div class="df-bar-fill df-bar-occupied" [style.width.%]="occupiedPct"></div>
+              </div>
+              <span class="df-bar-pct">{{ occupiedPct }}%</span>
+            </div>
+
+            <!-- Cleaning -->
+            <div class="df-status-bar-row">
+              <div class="df-status-bar-lbl">
+                <span class="df-badge-dot bg-cleaning"></span>
+                <span>Cleaning</span>
+                <strong>{{ metrics.cleaningTables }}</strong>
+              </div>
+              <div class="df-bar-track">
+                <div class="df-bar-fill df-bar-cleaning" [style.width.%]="cleaningPct"></div>
+              </div>
+              <span class="df-bar-pct">{{ cleaningPct }}%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Zone Capacity Breakdown -->
+        <div class="df-card">
+          <div class="df-card-header">
+            <h3 class="df-card-title">
+              <i class="fa-solid fa-map-location-dot text-forest-light"></i>
+              <span>Dining Zone Capacity</span>
+            </h3>
+          </div>
+
+          <div class="df-zones-capacity-list">
+            <div class="df-zone-cap-row" *ngFor="let z of zones">
+              <div class="df-zone-cap-info">
+                <strong>{{ z.name }}</strong>
+                <span>{{ z.totalTables }} tables &bull; {{ z.capacity }} total seats</span>
+              </div>
+              <a routerLink="/tables" class="df-btn-text">
+                <span>View Zone</span>
+                <i class="fa-solid fa-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right Column: Today's Reservations Timeline -->
+      <div class="df-dashboard-col">
+        <div class="df-card df-today-schedule-card">
+          <div class="df-card-header">
+            <div>
+              <h3 class="df-card-title">
+                <i class="fa-solid fa-clock text-terracotta"></i>
+                <span>Today's Reservation Schedule</span>
+              </h3>
+              <p class="df-card-desc">Active bookings scheduled for today's service.</p>
+            </div>
+            <a routerLink="/reservations" class="df-btn df-btn-sm df-btn-outline">
+              <span>View All</span>
+            </a>
+          </div>
+
+          <!-- List of Today's Reservations -->
+          <div class="df-today-list" *ngIf="todayReservations.length > 0">
+            <div class="df-today-item" *ngFor="let r of todayReservations">
+              <div class="df-today-time">
+                <i class="fa-solid fa-clock"></i>
+                <strong>{{ r.time | time12 }}</strong>
+              </div>
+              <div class="df-today-info">
+                <div class="df-today-name">
+                  <strong>{{ r.customerName }}</strong>
+                  <span class="df-ref-sub">({{ r.id }})</span>
+                </div>
+                <div class="df-today-meta">
+                  <span><i class="fa-solid fa-table-cells"></i> {{ getTableNumber(r.tableId) }}</span>
+                  <span>&bull;</span>
+                  <span><i class="fa-solid fa-users"></i> {{ r.guests | seatsLabel }}</span>
+                  <span *ngIf="r.occasion">&bull; {{ r.occasion }}</span>
+                </div>
+              </div>
+              <div class="df-today-status">
+                <app-status-badge [status]="r.status"></app-status-badge>
+              </div>
+            </div>
+          </div>
+
+          <!-- Empty Notice if no reservations today -->
+          <div class="df-empty-notice" *ngIf="todayReservations.length === 0">
+            <i class="fa-solid fa-calendar-check text-forest-light"></i>
+            <p>No reservations currently booked for today. Tables are open for walk-ins!</p>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>

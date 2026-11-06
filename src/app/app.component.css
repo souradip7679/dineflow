@@ -1,0 +1,94 @@
+.df-app-root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.df-main-content {
+  flex: 1;
+}
+
+/* Toast Container */
+.df-toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 1050;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 420px;
+  width: calc(100vw - 48px);
+  pointer-events: none;
+}
+
+.df-toast {
+  pointer-events: auto;
+  background: var(--df-surface, #ffffff);
+  border: 1px solid var(--df-border, #e5e0d8);
+  border-radius: var(--df-radius-md, 12px);
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  animation: slideInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.df-toast__icon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.df-toast--success .df-toast__icon {
+  color: #2d6a4f;
+}
+
+.df-toast--error .df-toast__icon {
+  color: #c25435;
+}
+
+.df-toast--warning .df-toast__icon {
+  color: #d4a359;
+}
+
+.df-toast--info .df-toast__icon {
+  color: #1e6091;
+}
+
+.df-toast__body {
+  flex: 1;
+}
+
+.df-toast__msg {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: var(--df-text-primary, #1e2420);
+}
+
+.df-toast__close {
+  background: transparent;
+  border: none;
+  font-size: 1rem;
+  color: var(--df-text-muted, #8e9590);
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+.df-toast__close:hover {
+  color: var(--df-text-primary, #1e2420);
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

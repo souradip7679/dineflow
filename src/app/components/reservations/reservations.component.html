@@ -1,0 +1,323 @@
+<div class="df-reservations-view">
+  <div class="df-container">
+
+    <!-- Page Header & Action Bar -->
+    <div class="df-page-header df-page-header--actions">
+      <div>
+        <span class="df-section-eyebrow">Front of House Operations</span>
+        <h1 class="df-page-title">Reservation Management</h1>
+        <p class="df-page-subtitle">
+          Search, filter, update, and manage all guest reservations with synchronized table statuses.
+        </p>
+      </div>
+      <div class="df-header-actions">
+        <button type="button" class="df-btn df-btn-outline" (click)="exportToCSV()" title="Export filtered records to CSV">
+          <i class="fa-solid fa-file-csv"></i>
+          <span>Export CSV</span>
+        </button>
+        <a routerLink="/book" class="df-btn df-btn-terracotta">
+          <i class="fa-solid fa-plus"></i>
+          <span>New Reservation</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Filter & Search Toolbar Card -->
+    <div class="df-card df-toolbar-card mb-4">
+      <div class="df-toolbar-row">
+        <!-- Search Input -->
+        <div class="df-search-input-wrap">
+          <i class="fa-solid fa-magnifying-glass df-search-icon"></i>
+          <input type="text"
+                 class="df-input df-search-input"
+                 placeholder="Search by customer name, ID (e.g. DF-1001), phone, or email..."
+                 [(ngModel)]="searchQuery"
+                 (ngModelChange)="refresh()">
+          <button type="button" class="df-search-clear" *ngIf="searchQuery" (click)="searchQuery = ''; refresh()">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <!-- Date Filter Dropdown -->
+        <div class="df-toolbar-date-filter">
+          <label class="df-toolbar-label"><i class="fa-solid fa-calendar"></i> Date:</label>
+          <select class="df-select df-select-sm" [(ngModel)]="dateFilter" (change)="refresh()">
+            <option value="All">All Dates</option>
+            <option value="Today">Today Only</option>
+            <option value="Tomorrow">Tomorrow</option>
+            <option value="Upcoming">Upcoming (Future)</option>
+            <option value="Past">Past Records</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Status Filter Tabs -->
+      <div class="df-status-filter-tabs">
+        <button type="button"
+                class="df-tab-btn"
+                [ngClass]="{'active': statusFilter === 'All'}"
+                (click)="setStatusFilter('All')">
+          <span>All Bookings</span>
+          <span class="df-tab-count">{{ statusCounts.all }}</span>
+        </button>
+        <button type="button"
+                class="df-tab-btn df-tab-confirmed"
+                [ngClass]="{'active': statusFilter === 'Confirmed'}"
+                (click)="setStatusFilter('Confirmed')">
+          <span class="df-badge-dot"></span>
+          <span>Confirmed</span>
+          <span class="df-tab-count">{{ statusCounts.confirmed }}</span>
+        </button>
+        <button type="button"
+                class="df-tab-btn df-tab-pending"
+                [ngClass]="{'active': statusFilter === 'Pending'}"
+                (click)="setStatusFilter('Pending')">
+          <span class="df-badge-dot"></span>
+          <span>Pending</span>
+          <span class="df-tab-count">{{ statusCounts.pending }}</span>
+        </button>
+        <button type="button"
+                class="df-tab-btn df-tab-completed"
+                [ngClass]="{'active': statusFilter === 'Completed'}"
+                (click)="setStatusFilter('Completed')">
+          <span class="df-badge-dot"></span>
+          <span>Completed</span>
+          <span class="df-tab-count">{{ statusCounts.completed }}</span>
+        </button>
+        <button type="button"
+                class="df-tab-btn df-tab-cancelled"
+                [ngClass]="{'active': statusFilter === 'Cancelled'}"
+                (click)="setStatusFilter('Cancelled')">
+          <span class="df-badge-dot"></span>
+          <span>Cancelled</span>
+          <span class="df-tab-count">{{ statusCounts.cancelled }}</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Empty State: No Reservations Matching Filter -->
+    <div class="df-empty-state" *ngIf="filteredReservations.length === 0">
+      <div class="df-empty-icon">
+        <i class="fa-solid fa-calendar-xmark"></i>
+      </div>
+      <h3>No Reservations Found</h3>
+      <p>
+        No reservation records match your active search &ldquo;{{ searchQuery }}&rdquo; or current filters.
+      </p>
+      <div class="df-empty-actions">
+        <button type="button" class="df-btn df-btn-outline" (click)="clearFilters()">
+          <i class="fa-solid fa-filter-circle-xmark"></i>
+          <span>Clear All Filters</span>
+        </button>
+        <a routerLink="/book" class="df-btn df-btn-terracotta">
+          <i class="fa-solid fa-plus"></i>
+          <span>Create New Booking</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Reservations Table Card -->
+    <div class="df-card df-table-card-container" *ngIf="filteredReservations.length > 0">
+      <div class="df-table-card-header">
+        <span class="df-table-count-label">
+          Showing <strong>{{ filteredReservations.length }}</strong> of <strong>{{ reservations.length }}</strong> total reservations
+        </span>
+      </div>
+
+      <div class="df-table-responsive">
+        <table class="df-data-table">
+          <thead>
+            <tr>
+              <th>Booking Ref</th>
+              <th>Customer</th>
+              <th>Date &amp; Time</th>
+              <th>Party</th>
+              <th>Table</th>
+              <th>Occasion</th>
+              <th>Status</th>
+              <th class="text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let res of filteredReservations" [ngClass]="'row-status--' + res.status.toLowerCase()">
+              
+              <!-- Ref ID -->
+              <td>
+                <span class="df-ref-badge">{{ res.id }}</span>
+              </td>
+
+              <!-- Customer Details -->
+              <td>
+                <div class="df-cust-cell">
+                  <span class="df-cust-name">{{ res.customerName }}</span>
+                  <span class="df-cust-meta">
+                    <a [href]="'tel:' + res.phone">{{ res.phone }}</a> &bull; {{ res.email }}
+                  </span>
+                </div>
+              </td>
+
+              <!-- Date & Time -->
+              <td>
+                <div class="df-schedule-cell">
+                  <span class="df-schedule-date">
+                    <i class="fa-solid fa-calendar-day"></i> {{ res.date | friendlyDate }}
+                  </span>
+                  <span class="df-schedule-time">
+                    <i class="fa-solid fa-clock"></i> {{ res.time | time12 }}
+                  </span>
+                </div>
+              </td>
+
+              <!-- Party Size -->
+              <td>
+                <span class="df-party-badge">
+                  <i class="fa-solid fa-users"></i> {{ res.guests | seatsLabel }}
+                </span>
+              </td>
+
+              <!-- Table -->
+              <td>
+                <div class="df-table-cell">
+                  <span class="df-table-badge">{{ getTableNumber(res.tableId) }}</span>
+                  <span class="df-zone-sub">{{ getTableZone(res.tableId) }}</span>
+                </div>
+              </td>
+
+              <!-- Occasion -->
+              <td>
+                <span class="df-occasion-tag">
+                  {{ res.occasion || 'Casual Dining' }}
+                </span>
+                <span class="df-requests-flag" *ngIf="res.specialRequests" [title]="res.specialRequests">
+                  <i class="fa-solid fa-comment-dots text-gold"></i>
+                </span>
+              </td>
+
+              <!-- Status -->
+              <td>
+                <app-status-badge [status]="res.status"></app-status-badge>
+              </td>
+
+              <!-- Actions -->
+              <td class="text-right">
+                <div class="df-row-actions">
+                  <button type="button"
+                          class="df-btn-action df-btn-edit"
+                          (click)="openEditModal(res)"
+                          title="Edit Reservation">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                  </button>
+                  <button type="button"
+                          class="df-btn-action df-btn-cancel"
+                          *ngIf="res.status !== 'Cancelled'"
+                          (click)="openCancelModal(res)"
+                          title="Cancel Reservation">
+                    <i class="fa-solid fa-ban"></i>
+                  </button>
+                </div>
+              </td>
+
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Edit Reservation Modal -->
+  <app-modal-dialog [isOpen]="isEditModalOpen"
+                    title="Edit Reservation"
+                    icon="fa-pen-to-square text-forest-light"
+                    (close)="closeEditModal()">
+    <form class="df-form" (ngSubmit)="saveEdit()">
+      <div class="df-form-grid-2">
+        <div class="df-form-group">
+          <label class="df-label">Customer Name</label>
+          <input type="text" class="df-input" [(ngModel)]="editForm.customerName" name="customerName" required>
+        </div>
+        <div class="df-form-group">
+          <label class="df-label">Phone</label>
+          <input type="tel" class="df-input" [(ngModel)]="editForm.phone" name="phone" required>
+        </div>
+        <div class="df-form-group">
+          <label class="df-label">Email</label>
+          <input type="email" class="df-input" [(ngModel)]="editForm.email" name="email" required>
+        </div>
+        <div class="df-form-group">
+          <label class="df-label">Occasion</label>
+          <select class="df-select" [(ngModel)]="editForm.occasion" name="occasion">
+            <option value="Casual Dining">Casual Dining</option>
+            <option value="Anniversary">Anniversary</option>
+            <option value="Birthday">Birthday</option>
+            <option value="Business Dinner">Business Dinner</option>
+            <option value="Romantic Date">Romantic Date</option>
+            <option value="Family Gathering">Family Gathering</option>
+          </select>
+        </div>
+        <div class="df-form-group">
+          <label class="df-label">Date</label>
+          <input type="date" class="df-input" [(ngModel)]="editForm.date" name="date" required>
+        </div>
+        <div class="df-form-group">
+          <label class="df-label">Time</label>
+          <input type="time" class="df-input" [(ngModel)]="editForm.time" name="time" required>
+        </div>
+        <div class="df-form-group">
+          <label class="df-label">Guests</label>
+          <input type="number" class="df-input" [(ngModel)]="editForm.guests" name="guests" min="1" max="10" required>
+        </div>
+        <div class="df-form-group">
+          <label class="df-label">Assigned Table</label>
+          <select class="df-select" [(ngModel)]="editForm.tableId" name="tableId" required>
+            <option *ngFor="let t of tables" [ngValue]="t.id">
+              {{ t.number }} &ndash; {{ t.zone }} (Seats {{ t.capacity }})
+            </option>
+          </select>
+        </div>
+        <div class="df-form-group">
+          <label class="df-label">Booking Status</label>
+          <select class="df-select" [(ngModel)]="editForm.status" name="status">
+            <option value="Confirmed">Confirmed</option>
+            <option value="Pending">Pending</option>
+            <option value="Completed">Completed</option>
+            <option value="Cancelled">Cancelled</option>
+          </select>
+        </div>
+      </div>
+      <div class="df-form-group mt-3">
+        <label class="df-label">Special Requests / Notes</label>
+        <textarea class="df-textarea" rows="2" [(ngModel)]="editForm.specialRequests" name="specialRequests"></textarea>
+      </div>
+    </form>
+    <div modal-footer>
+      <button type="button" class="df-btn df-btn-outline" (click)="closeEditModal()">Cancel</button>
+      <button type="button" class="df-btn df-btn-forest" (click)="saveEdit()">Save Changes</button>
+    </div>
+  </app-modal-dialog>
+
+  <!-- Cancel Confirmation Modal -->
+  <app-modal-dialog [isOpen]="isCancelModalOpen"
+                    title="Cancel Reservation"
+                    icon="fa-triangle-exclamation text-terracotta"
+                    (close)="closeCancelModal()">
+    <div class="df-cancel-modal-body" *ngIf="cancellingReservation">
+      <p>
+        Are you sure you want to cancel the reservation for <strong>{{ cancellingReservation.customerName }}</strong>
+        (Reference: <strong>{{ cancellingReservation.id }}</strong>)?
+      </p>
+      <div class="df-form-group mt-3">
+        <label class="df-label">Reason for cancellation (optional):</label>
+        <input type="text"
+               class="df-input"
+               placeholder="e.g. Guest called to cancel, weather issue, schedule change..."
+               [(ngModel)]="cancelReason">
+      </div>
+    </div>
+    <div modal-footer>
+      <button type="button" class="df-btn df-btn-outline" (click)="closeCancelModal()">Keep Booking</button>
+      <button type="button" class="df-btn df-btn-terracotta" (click)="confirmCancellation()">Confirm Cancellation</button>
+    </div>
+  </app-modal-dialog>
+
+</div>

@@ -1,0 +1,372 @@
+.df-booking-view {
+  padding: 3rem 0 5rem;
+}
+
+.df-booking-layout {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 2.5rem;
+  margin-top: 2rem;
+}
+
+.df-card-desc {
+  font-size: 0.85rem;
+  color: var(--df-text-muted, #8e9590);
+  margin-top: 4px;
+}
+
+.df-form {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.df-form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding-bottom: 1.75rem;
+  border-bottom: 1px solid var(--df-border, #e5e0d8);
+}
+
+.df-form-section:last-of-type {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.df-form-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.df-form-section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--df-text-primary, #1e2420);
+  margin: 0;
+}
+
+.df-step-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--df-forest, #1a3b32);
+  color: var(--df-ivory, #faf7f2);
+  font-size: 0.85rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.df-form-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.df-form-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.df-form-hint {
+  font-size: 0.75rem;
+  color: var(--df-text-muted, #8e9590);
+  margin-top: 4px;
+}
+
+.df-link-subtle {
+  font-size: 0.85rem;
+  color: var(--df-forest-light, #2d6a4f);
+  text-decoration: none;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.df-link-subtle:hover {
+  text-decoration: underline;
+}
+
+.df-table-selected-preview {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: rgba(45, 106, 79, 0.08);
+  border: 1px solid rgba(45, 106, 79, 0.25);
+  border-radius: var(--df-radius-md, 12px);
+  padding: 1rem 1.25rem;
+  margin-top: 0.75rem;
+}
+
+.df-table-preview-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: rgba(45, 106, 79, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.df-table-preview-info {
+  flex: 1;
+}
+
+.df-table-preview-info strong {
+  font-size: 0.95rem;
+  color: var(--df-text-primary, #1e2420);
+}
+
+.df-table-preview-info p {
+  font-size: 0.8rem;
+  color: var(--df-text-secondary, #5f6661);
+  margin: 2px 0 0;
+}
+
+.df-table-preview-cap {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--df-forest-light, #2d6a4f);
+}
+
+.df-form-checkbox-wrap {
+  padding: 1rem;
+  background: var(--df-surface-muted, #f4efe6);
+  border-radius: var(--df-radius-md, 12px);
+}
+
+.df-checkbox-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--df-text-secondary, #5f6661);
+  cursor: pointer;
+}
+
+.df-checkbox-label input {
+  margin-top: 3px;
+  accent-color: var(--df-terracotta, #c25435);
+  width: 16px;
+  height: 16px;
+}
+
+.df-btn-submit {
+  width: 100%;
+}
+
+/* Sidebar Cards */
+.df-summary-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.df-summary-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed var(--df-border, #e5e0d8);
+}
+
+.df-summary-label {
+  color: var(--df-text-secondary, #5f6661);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.df-summary-val {
+  font-weight: 600;
+  color: var(--df-text-primary, #1e2420);
+}
+
+.df-guarantee-card {
+  background: linear-gradient(135deg, rgba(26, 59, 50, 0.08), rgba(45, 106, 79, 0.15));
+  border: 1px solid rgba(45, 106, 79, 0.3);
+  text-align: center;
+  padding: 1.75rem;
+}
+
+.df-guarantee-icon {
+  font-size: 2rem;
+  color: var(--df-forest-light, #2d6a4f);
+  margin-bottom: 0.75rem;
+}
+
+.df-guarantee-card h4 {
+  font-family: var(--df-font-heading, 'Playfair Display', serif);
+  font-size: 1.15rem;
+  margin-bottom: 0.5rem;
+  color: var(--df-text-primary, #1e2420);
+}
+
+.df-guarantee-card p {
+  font-size: 0.85rem;
+  color: var(--df-text-secondary, #5f6661);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.df-policies-card {
+  padding: 1.5rem;
+}
+
+.df-card-subtitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--df-text-primary, #1e2420);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.df-policies-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 0.85rem;
+  color: var(--df-text-secondary, #5f6661);
+  line-height: 1.4;
+}
+
+/* Receipt Card */
+.df-receipt-card {
+  max-width: 680px;
+  margin: 2rem auto 0;
+  background: var(--df-surface, #ffffff);
+  border: 2px solid var(--df-forest-light, #2d6a4f);
+  border-radius: var(--df-radius-xl, 24px);
+  padding: 3rem;
+  box-shadow: var(--df-shadow-lg, 0 16px 36px rgba(0,0,0,0.1));
+}
+
+.df-receipt-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--df-border, #e5e0d8);
+}
+
+.df-receipt-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(45, 106, 79, 0.15);
+  color: #2d6a4f;
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  margin-bottom: 1rem;
+}
+
+.df-receipt-title {
+  font-family: var(--df-font-heading, 'Playfair Display', serif);
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 6px;
+  color: var(--df-text-primary, #1e2420);
+}
+
+.df-receipt-ref {
+  font-size: 1.1rem;
+  color: var(--df-text-secondary, #5f6661);
+}
+
+.df-receipt-details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.df-receipt-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.df-receipt-label {
+  font-size: 0.8rem;
+  color: var(--df-text-muted, #8e9590);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.df-receipt-val {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--df-text-primary, #1e2420);
+}
+
+.df-receipt-notes {
+  background: var(--df-surface-muted, #f4efe6);
+  padding: 1rem;
+  border-radius: var(--df-radius-md, 12px);
+  font-size: 0.85rem;
+  color: var(--df-text-secondary, #5f6661);
+  margin-bottom: 1.5rem;
+}
+
+.df-receipt-notes strong {
+  display: block;
+  color: var(--df-text-primary, #1e2420);
+  margin-bottom: 4px;
+}
+
+.df-receipt-tip {
+  display: flex;
+  gap: 10px;
+  font-size: 0.8rem;
+  color: var(--df-text-muted, #8e9590);
+  line-height: 1.4;
+  margin-bottom: 2rem;
+}
+
+.df-receipt-footer {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .df-booking-layout {
+    grid-template-columns: 1fr;
+  }
+  .df-form-grid-3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .df-form-grid-2 {
+    grid-template-columns: 1fr;
+  }
+  .df-receipt-card {
+    padding: 2rem 1.5rem;
+  }
+  .df-receipt-details-grid {
+    grid-template-columns: 1fr;
+  }
+}

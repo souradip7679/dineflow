@@ -1,0 +1,193 @@
+<div class="df-tables-view">
+  <div class="df-container">
+
+    <!-- Page Header -->
+    <div class="df-page-header df-page-header--actions">
+      <div>
+        <span class="df-section-eyebrow">Restaurant Floor Plan</span>
+        <h1 class="df-page-title">Interactive Table Management</h1>
+        <p class="df-page-subtitle">
+          Real-time spatial floor map showing table capacity, live occupancy status, and table turnarounds.
+        </p>
+      </div>
+      <div class="df-header-actions">
+        <a routerLink="/book" class="df-btn df-btn-terracotta">
+          <i class="fa-solid fa-calendar-plus"></i>
+          <span>Book a Table</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Status Legend & Counters Bar -->
+    <div class="df-card df-legend-card mb-4">
+      <div class="df-legend-title">
+        <i class="fa-solid fa-compass"></i>
+        <span>Live Floor Status:</span>
+      </div>
+      <div class="df-legend-items">
+        <div class="df-legend-pill df-legend-pill--available"
+             [ngClass]="{'active': statusFilter === 'Available'}"
+             (click)="setStatusFilter(statusFilter === 'Available' ? 'All' : 'Available')">
+          <span class="df-badge-dot"></span>
+          <span class="df-legend-name">Available</span>
+          <span class="df-legend-count">{{ statusCounts.available }}</span>
+        </div>
+        <div class="df-legend-pill df-legend-pill--reserved"
+             [ngClass]="{'active': statusFilter === 'Reserved'}"
+             (click)="setStatusFilter(statusFilter === 'Reserved' ? 'All' : 'Reserved')">
+          <span class="df-badge-dot"></span>
+          <span class="df-legend-name">Reserved</span>
+          <span class="df-legend-count">{{ statusCounts.reserved }}</span>
+        </div>
+        <div class="df-legend-pill df-legend-pill--occupied"
+             [ngClass]="{'active': statusFilter === 'Occupied'}"
+             (click)="setStatusFilter(statusFilter === 'Occupied' ? 'All' : 'Occupied')">
+          <span class="df-badge-dot"></span>
+          <span class="df-legend-name">Occupied</span>
+          <span class="df-legend-count">{{ statusCounts.occupied }}</span>
+        </div>
+        <div class="df-legend-pill df-legend-pill--cleaning"
+             [ngClass]="{'active': statusFilter === 'Cleaning'}"
+             (click)="setStatusFilter(statusFilter === 'Cleaning' ? 'All' : 'Cleaning')">
+          <span class="df-badge-dot"></span>
+          <span class="df-legend-name">Cleaning</span>
+          <span class="df-legend-count">{{ statusCounts.cleaning }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter Toolbar: Dining Zones & Capacity -->
+    <div class="df-card df-table-filters-card mb-4">
+      <div class="df-filters-wrap">
+        <!-- Zone Tabs -->
+        <div class="df-zone-tabs">
+          <button type="button"
+                  class="df-zone-tab-btn"
+                  [ngClass]="{'active': zoneFilter === 'all'}"
+                  (click)="setZoneFilter('all')">
+            <i class="fa-solid fa-border-all"></i>
+            <span>All Zones</span>
+          </button>
+          <button type="button"
+                  class="df-zone-tab-btn"
+                  *ngFor="let z of zones"
+                  [ngClass]="{'active': zoneFilter === z.code}"
+                  (click)="setZoneFilter(z.code)">
+            <span>{{ z.name }}</span>
+            <span class="df-zone-count">({{ z.totalTables }})</span>
+          </button>
+        </div>
+
+        <!-- Capacity Filter Dropdown -->
+        <div class="df-capacity-filter">
+          <label class="df-filter-lbl"><i class="fa-solid fa-users"></i> Capacity:</label>
+          <select class="df-select df-select-sm" [(ngModel)]="capacityFilter" (change)="applyFilters()">
+            <option value="all">All Capacities</option>
+            <option value="2">2 Guests (Intimate)</option>
+            <option value="4">4 Guests (Standard)</option>
+            <option value="6plus">6+ Guests (Large Groups)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Floor Plan Grid -->
+    <div class="df-tables-grid">
+      <app-table-card *ngFor="let table of filteredTables"
+                      [table]="table"
+                      (select)="openTableDetails($event)">
+      </app-table-card>
+    </div>
+
+    <!-- Empty Floor State -->
+    <div class="df-empty-state mt-4" *ngIf="filteredTables.length === 0">
+      <div class="df-empty-icon"><i class="fa-solid fa-chair"></i></div>
+      <h3>No Tables Match Filter Criteria</h3>
+      <p>Try resetting the zone or capacity filters above to view the full restaurant floor layout.</p>
+      <button type="button" class="df-btn df-btn-outline" (click)="setZoneFilter('all'); setStatusFilter('All'); capacityFilter = 'all'; applyFilters()">
+        <span>Reset Filters</span>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Table Details Modal -->
+  <app-modal-dialog [isOpen]="isDetailsModalOpen"
+                    [title]="'Table ' + (selectedTable ? selectedTable.number : '') + ' Details'"
+                    icon="fa-chair text-forest-light"
+                    (close)="closeDetailsModal()">
+    <div class="df-table-modal-body" *ngIf="selectedTable">
+      
+      <!-- Top Overview Bar -->
+      <div class="df-table-modal-top">
+        <div class="df-modal-shape-preview" [ngClass]="'shape-' + selectedTable.shape">
+          <span class="capacity-tag"><i class="fa-solid fa-users"></i> {{ selectedTable.capacity }}</span>
+        </div>
+        <div class="df-table-modal-meta">
+          <h4>{{ selectedTable.zone }}</h4>
+          <p>{{ selectedTable.description }}</p>
+          <div class="mt-2">
+            <app-status-badge [status]="selectedTable.status"></app-status-badge>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Status Switcher Form -->
+      <div class="df-status-change-box mt-4">
+        <label class="df-label">Update Table Status:</label>
+        <div class="df-status-change-row">
+          <select class="df-select" [(ngModel)]="modalNewStatus">
+            <option value="Available">Available</option>
+            <option value="Reserved">Reserved</option>
+            <option value="Occupied">Occupied</option>
+            <option value="Cleaning">Cleaning</option>
+          </select>
+          <button type="button" class="df-btn df-btn-forest" (click)="updateSelectedTableStatus()">
+            <i class="fa-solid fa-check"></i>
+            <span>Apply</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Active Reservations for this table -->
+      <div class="df-table-reservations-section mt-4">
+        <h5 class="df-section-h5">
+          <i class="fa-solid fa-calendar-check text-forest-light"></i>
+          <span>Active Bookings for this Table ({{ tableReservations.length }})</span>
+        </h5>
+
+        <div class="df-table-res-list" *ngIf="tableReservations.length > 0">
+          <div class="df-table-res-card" *ngFor="let r of tableReservations">
+            <div class="df-table-res-header">
+              <strong>{{ r.customerName }}</strong>
+              <span class="df-ref-badge">{{ r.id }}</span>
+            </div>
+            <div class="df-table-res-meta">
+              <span><i class="fa-solid fa-calendar-day"></i> {{ r.date | friendlyDate }}</span>
+              <span><i class="fa-solid fa-clock"></i> {{ r.time | time12 }}</span>
+              <span><i class="fa-solid fa-users"></i> {{ r.guests }} guests</span>
+            </div>
+            <div class="df-table-res-notes" *ngIf="r.specialRequests">
+              <em>&ldquo;{{ r.specialRequests }}&rdquo;</em>
+            </div>
+          </div>
+        </div>
+
+        <div class="df-no-bookings-notice" *ngIf="tableReservations.length === 0">
+          <i class="fa-solid fa-circle-check text-forest-light"></i>
+          <span>No conflicting reservations currently scheduled for this table.</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div modal-footer>
+      <button type="button" class="df-btn df-btn-outline" (click)="closeDetailsModal()">Close</button>
+      <button type="button" class="df-btn df-btn-terracotta" (click)="bookThisTable()">
+        <i class="fa-solid fa-calendar-plus"></i>
+        <span>Book This Table</span>
+      </button>
+    </div>
+  </app-modal-dialog>
+
+</div>

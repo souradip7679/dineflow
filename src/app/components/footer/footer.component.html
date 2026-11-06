@@ -1,0 +1,96 @@
+<footer class="df-footer">
+  <div class="df-container df-footer-container">
+    <div class="df-footer-grid">
+      <!-- Col 1: Brand & Philosophy -->
+      <div class="df-footer-col">
+        <div class="df-brand mb-3">
+          <div class="df-brand-icon">
+            <i class="fa-solid fa-utensils"></i>
+          </div>
+          <div class="df-brand-text">
+            <span class="df-brand-name text-ivory">DineFlow</span>
+            <span class="df-brand-sub">Bistro &amp; Lounge</span>
+          </div>
+        </div>
+        <p class="df-footer-text">
+          Experience culinary storytelling in every plate. Contemporary gastronomy, artisanal cocktails, and tailored table reservations.
+        </p>
+        <div class="df-social-links">
+          <a href="#" class="df-social-btn" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" class="df-social-btn" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" class="df-social-btn" aria-label="TripAdvisor"><i class="fa-solid fa-hotel"></i></a>
+        </div>
+      </div>
+
+      <!-- Col 2: Navigation -->
+      <div class="df-footer-col">
+        <h4 class="df-footer-title">Navigation</h4>
+        <ul class="df-footer-links">
+          <li><a routerLink="/"><i class="fa-solid fa-angle-right"></i> Home</a></li>
+          <li><a routerLink="/book"><i class="fa-solid fa-angle-right"></i> Book a Table</a></li>
+          <li><a routerLink="/reservations"><i class="fa-solid fa-angle-right"></i> Reservations</a></li>
+          <li><a routerLink="/tables"><i class="fa-solid fa-angle-right"></i> Table Floor Plan</a></li>
+          <li><a routerLink="/dashboard"><i class="fa-solid fa-angle-right"></i> Manager Dashboard</a></li>
+        </ul>
+      </div>
+
+      <!-- Col 3: Service Hours & Seating -->
+      <div class="df-footer-col">
+        <h4 class="df-footer-title">Hours &amp; Seating</h4>
+        <div class="df-hours-list">
+          <div class="df-hours-row">
+            <span class="df-day">Mon &ndash; Thu</span>
+            <span class="df-time">11:30 AM &ndash; 10:30 PM</span>
+          </div>
+          <div class="df-hours-row">
+            <span class="df-day">Fri &ndash; Sat</span>
+            <span class="df-time">11:30 AM &ndash; 11:30 PM</span>
+          </div>
+          <div class="df-hours-row">
+            <span class="df-day">Sunday Brunch</span>
+            <span class="df-time">10:00 AM &ndash; 10:00 PM</span>
+          </div>
+        </div>
+        <div class="df-footer-badge mt-3">
+          <i class="fa-solid fa-clock-rotate-left"></i>
+          <span>Kitchen orders close 45 mins before closing</span>
+        </div>
+      </div>
+
+      <!-- Col 4: Location & Academic Info -->
+      <div class="df-footer-col">
+        <h4 class="df-footer-title">Location &amp; Project</h4>
+        <p class="df-contact-item">
+          <i class="fa-solid fa-location-dot"></i>
+          <span>482 Gourmet Boulevard, Culinary Quarter, NY 10012</span>
+        </p>
+        <p class="df-contact-item">
+          <i class="fa-solid fa-phone"></i>
+          <span>+1 (555) 346-3356</span>
+        </p>
+        <p class="df-contact-item">
+          <i class="fa-solid fa-envelope"></i>
+          <span>concierge&#64;dineflow.com</span>
+        </p>
+        <div class="df-academic-pill mt-3">
+          <button type="button" class="df-btn-reset-data" (click)="resetData()" title="Reset LocalStorage to fresh initial data">
+            <i class="fa-solid fa-arrow-rotate-left"></i>
+            <span>Reset Sample Data</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Copyright Sub-Footer -->
+    <div class="df-subfooter">
+      <p>&copy; {{currentYear}} DineFlow — Restaurant Reservation &amp; Table Management System. Built with Modern Angular.</p>
+      <div class="df-subfooter-links">
+        <a href="#privacy">Privacy Policy</a>
+        <span>&bull;</span>
+        <a href="#terms">Terms of Service</a>
+        <span>&bull;</span>
+        <a href="#accessibility">Accessibility</a>
+      </div>
+    </div>
+  </div>
+</footer>

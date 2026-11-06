@@ -1,0 +1,51 @@
+.df-404-view {
+  padding: 5rem 0 6rem;
+}
+
+.df-404-card {
+  max-width: 580px;
+  margin: 0 auto;
+  background: var(--df-surface, #ffffff);
+  border: 1px solid var(--df-border, #e5e0d8);
+  border-radius: var(--df-radius-xl, 24px);
+  padding: 3.5rem 2.5rem;
+  box-shadow: var(--df-shadow-md, 0 12px 32px rgba(0,0,0,0.06));
+}
+
+.df-404-icon {
+  font-size: 3.5rem;
+  color: var(--df-terracotta, #c25435);
+  margin-bottom: 1rem;
+}
+
+.df-404-code {
+  font-family: var(--df-font-heading, 'Playfair Display', serif);
+  font-size: 4rem;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--df-forest, #1a3b32);
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.df-404-title {
+  font-family: var(--df-font-heading, 'Playfair Display', serif);
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--df-text-primary, #1e2420);
+}
+
+.df-404-desc {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--df-text-secondary, #5f6661);
+  margin-bottom: 2rem;
+}
+
+.df-404-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}

@@ -1,0 +1,106 @@
+<header class="df-navbar">
+  <div class="df-container df-navbar-container">
+    <!-- Brand Logo -->
+    <a routerLink="/" class="df-brand" (click)="closeMobileMenu()">
+      <div class="df-brand-icon">
+        <i class="fa-solid fa-utensils"></i>
+      </div>
+      <div class="df-brand-text">
+        <span class="df-brand-name">DineFlow</span>
+        <span class="df-brand-sub">Bistro &amp; Lounge</span>
+      </div>
+    </a>
+
+    <!-- Desktop Navigation Links -->
+    <nav class="df-nav-links" aria-label="Main Navigation">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="df-nav-link">
+        <i class="fa-solid fa-house"></i>
+        <span>Home</span>
+      </a>
+      <a routerLink="/book" routerLinkActive="active" class="df-nav-link">
+        <i class="fa-solid fa-calendar-plus"></i>
+        <span>Book a Table</span>
+      </a>
+      <a routerLink="/reservations" routerLinkActive="active" class="df-nav-link">
+        <i class="fa-solid fa-list-check"></i>
+        <span>Reservations</span>
+      </a>
+      <a routerLink="/tables" routerLinkActive="active" class="df-nav-link">
+        <i class="fa-solid fa-table-cells"></i>
+        <span>Table Layout</span>
+      </a>
+      <a routerLink="/dashboard" routerLinkActive="active" class="df-nav-link">
+        <i class="fa-solid fa-chart-line"></i>
+        <span>Dashboard</span>
+      </a>
+    </nav>
+
+    <!-- Header Actions (Theme Toggle & CTA) -->
+    <div class="df-nav-actions">
+      <!-- Theme Switcher Button -->
+      <button type="button"
+              class="df-btn-icon df-theme-toggle"
+              (click)="toggleTheme()"
+              [title]="themeService.isDark() ? 'Switch to Light Theme' : 'Switch to Dark Theme'"
+              [attr.aria-label]="themeService.isDark() ? 'Switch to Light Theme' : 'Switch to Dark Theme'">
+        <i class="fa-solid" [ngClass]="themeService.isDark() ? 'fa-sun text-gold' : 'fa-moon text-charcoal'"></i>
+      </button>
+
+      <!-- Primary CTA Button -->
+      <a routerLink="/book" class="df-btn df-btn-sm df-btn-terracotta df-hide-mobile">
+        <i class="fa-solid fa-champagne-glasses"></i>
+        <span>Reserve</span>
+      </a>
+
+      <!-- Mobile Hamburger Toggle -->
+      <button type="button"
+              class="df-btn-icon df-hamburger df-show-mobile"
+              (click)="toggleMobileMenu()"
+              aria-label="Toggle navigation menu"
+              [attr.aria-expanded]="isMobileMenuOpen">
+        <i class="fa-solid" [ngClass]="isMobileMenuOpen ? 'fa-xmark' : 'fa-bars'"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Drawer Overlay & Navigation -->
+  <div class="df-mobile-drawer" [ngClass]="{ 'df-mobile-drawer--open': isMobileMenuOpen }">
+    <div class="df-mobile-drawer-backdrop" (click)="closeMobileMenu()"></div>
+    <div class="df-mobile-drawer-content">
+      <div class="df-mobile-drawer-header">
+        <span class="df-brand-name">Menu</span>
+        <button type="button" class="df-btn-icon" (click)="closeMobileMenu()">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <nav class="df-mobile-nav">
+        <a routerLink="/" (click)="closeMobileMenu()" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="df-mobile-nav-link">
+          <i class="fa-solid fa-house"></i>
+          <span>Home</span>
+        </a>
+        <a routerLink="/book" (click)="closeMobileMenu()" routerLinkActive="active" class="df-mobile-nav-link">
+          <i class="fa-solid fa-calendar-plus"></i>
+          <span>Book a Table</span>
+        </a>
+        <a routerLink="/reservations" (click)="closeMobileMenu()" routerLinkActive="active" class="df-mobile-nav-link">
+          <i class="fa-solid fa-list-check"></i>
+          <span>Reservations</span>
+        </a>
+        <a routerLink="/tables" (click)="closeMobileMenu()" routerLinkActive="active" class="df-mobile-nav-link">
+          <i class="fa-solid fa-table-cells"></i>
+          <span>Table Layout</span>
+        </a>
+        <a routerLink="/dashboard" (click)="closeMobileMenu()" routerLinkActive="active" class="df-mobile-nav-link">
+          <i class="fa-solid fa-chart-line"></i>
+          <span>Dashboard</span>
+        </a>
+      </nav>
+      <div class="df-mobile-drawer-footer">
+        <a routerLink="/book" (click)="closeMobileMenu()" class="df-btn df-btn-terracotta df-btn-block">
+          <i class="fa-solid fa-champagne-glasses"></i>
+          <span>Reserve a Table</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</header>

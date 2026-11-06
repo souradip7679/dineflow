@@ -1,20 +1,43 @@
 {
   "name": "dineflow",
-  "version": "1.0.0",
-  "description": "DineFlow — Restaurant Reservation & Table Management System built with AngularJS 1.x",
-  "main": "dineflow/index.html",
+  "version": "2.0.0",
+  "description": "DineFlow — Luxury Restaurant Reservation & Table Management System built with Modern Angular & TypeScript Standalone Components",
   "scripts": {
-    "start": "npx -y serve dineflow -p 3000",
-    "serve": "npx -y serve dineflow -l 3000",
-    "serve:root": "npx -y serve . -l 3000",
-    "python:serve": "python -m http.server 3000 --directory dineflow"
+    "ng": "ng",
+    "start": "node preview.js",
+    "serve": "node preview.js",
+    "ng:serve": "ng serve",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development"
+  },
+  "private": true,
+  "dependencies": {
+    "@angular/animations": "^18.2.0",
+    "@angular/common": "^18.2.0",
+    "@angular/compiler": "^18.2.0",
+    "@angular/core": "^18.2.0",
+    "@angular/forms": "^18.2.0",
+    "@angular/platform-browser": "^18.2.0",
+    "@angular/platform-browser-dynamic": "^18.2.0",
+    "@angular/router": "^18.2.0",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0",
+    "zone.js": "~0.14.10"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "^18.2.0",
+    "@angular/cli": "^18.2.0",
+    "@angular/compiler-cli": "^18.2.0",
+    "typescript": "~5.5.2"
   },
   "keywords": [
-    "angularjs",
-    "restaurant-management",
-    "table-reservation",
-    "academic-project",
-    "full-stack-development"
+    "angular",
+    "angular-18",
+    "typescript",
+    "standalone-components",
+    "restaurant-reservation",
+    "table-management",
+    "full-stack-academic-project"
   ],
   "author": "Full Stack Development Student",
   "license": "MIT"
